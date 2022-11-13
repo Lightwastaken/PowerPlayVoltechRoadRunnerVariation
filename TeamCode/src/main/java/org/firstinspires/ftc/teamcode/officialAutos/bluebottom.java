@@ -50,29 +50,7 @@ public class bluebottom extends LinearOpMode {
     public void runOpMode() {
         robot.initHW();
 
-        robot.LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.LB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.RF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.RB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
-        robot.LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        telemetry.setMsTransmissionInterval(50);
-        telemetry.addData("status", "ready");
-        telemetry.update();
-
         waitForStart();
-        robot.leftClaw.setPosition(Servoconfig.LEFTMIDSERVOPOSTION);
-        robot.rightClaw.setPosition(Servoconfig.RIGHTMIDSERVOPOSTION);
-        robot.lift(Servoconfig.liftPower);
-
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
-
 
         while (opModeIsActive()) {
 //            telemetry.addData("Absolute Angle", robot.getAbsoluteAngle());
@@ -81,8 +59,9 @@ public class bluebottom extends LinearOpMode {
         }
 
 
-        telemetry.addData("Status", "Resetting Encoders");    //
+        telemetry.addData("Status", "Resetting Encoders");
         telemetry.update();
+
 
     }
 
