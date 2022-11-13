@@ -73,13 +73,12 @@ public class teleop extends LinearOpMode {
             robot.RB.setPower(backRightPower * speedControl);
 
             // non toggle claws
-            if (gamepad2.dpad_right)
-                robot.leftClaw.setPosition(0);
-                robot.rightClaw.setPosition(1);
-            if (gamepad2.dpad_left)
-                robot.rightClaw.setPosition(265/270);
-                robot.leftClaw.setPosition(5/270);
-
+            if (gamepad2.dpad_right) {
+                clawPosition(0, 1);
+            }
+            if (gamepad2.dpad_left) {
+                clawPosition((double) 265/270, (double) 5/270);
+            }
 
 
 
@@ -98,6 +97,10 @@ public class teleop extends LinearOpMode {
             // Pace this loop so jaw action is reasonable speed.
             sleep(50);
         }
+    }
+    public void clawPosition(double RC, double LC) {
+        robot.rightClaw.setPosition(RC);
+        robot.leftClaw.setPosition(LC);
     }
 }
 
