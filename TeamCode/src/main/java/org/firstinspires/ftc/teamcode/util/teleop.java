@@ -77,11 +77,12 @@ public class teleop extends LinearOpMode {
                 clawPosition(0, 1);
             }
             if (gamepad2.dpad_left) {
-                clawPosition((double) 265/270, (double) 5/270);
+                clawPosition((double) 267/270, (double) 3/270);
             }
 
-
-
+            if (gamepad2.x) {
+                slidesPosition(400,400);
+            }
 
 
             telemetry.addData("LF Encoder", robot.LF.getCurrentPosition());
@@ -101,6 +102,10 @@ public class teleop extends LinearOpMode {
     public void clawPosition(double RC, double LC) {
         robot.rightClaw.setPosition(RC);
         robot.leftClaw.setPosition(LC);
+    }
+    public void slidesPosition(int RL, int LL) {
+        robot.LL.setTargetPosition(LL);
+        robot.RL.setTargetPosition(RL);
     }
 }
 
