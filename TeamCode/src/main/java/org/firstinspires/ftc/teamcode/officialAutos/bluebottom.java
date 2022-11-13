@@ -6,10 +6,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Servoconfig;
 import org.firstinspires.ftc.teamcode.cameraDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.officialAutos.RobotHardware;
 
 //
 
@@ -42,25 +47,7 @@ public class bluebottom extends LinearOpMode {
 
     // Move in a square
     @Override
-    public void runOpMode() throws InterruptedException {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        cameraDetection detector = new cameraDetection(telemetry);
-        webcam.setPipeline(detector);
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                telemetry.addLine("error");
-                telemetry.update();
-            }
-
-        });
-
+    public void runOpMode() {
         robot.initHW();
 
         robot.LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -78,6 +65,9 @@ public class bluebottom extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
+        robot.leftClaw.setPosition(Servoconfig.LEFTMIDSERVOPOSTION);
+        robot.rightClaw.setPosition(Servoconfig.RIGHTMIDSERVOPOSTION);
+        robot.lift(Servoconfig.liftPower);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");    //
@@ -85,8 +75,8 @@ public class bluebottom extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            telemetry.addData("Absolute Angle", robot.getAbsoluteAngle());
-            telemetry.addData("Relative Angle", robot.getAngle());
+//            telemetry.addData("Absolute Angle", robot.getAbsoluteAngle());
+//            telemetry.addData("Relative Angle", robot.getAngle());
             telemetry.update();
         }
 
@@ -110,7 +100,6 @@ public class bluebottom extends LinearOpMode {
     // *** Turning ***
 
     // resets currAngle Value
-
 
 
 }
