@@ -77,8 +77,8 @@ public class teleop extends LinearOpMode {
                 robot.leftClaw.setPosition(5/270);
                 else robot.leftClaw.setPosition(0);
             if (gamepad2.dpad_right)
-                robot.rightClaw.setPosition(5/270);
-                else robot.rightClaw.setPosition(0);
+                robot.rightClaw.setPosition(265/270);
+                else robot.rightClaw.setPosition(1);
             if(gamepad2.a){
                 robot.lift(0);
             } else if(gamepad2.b){

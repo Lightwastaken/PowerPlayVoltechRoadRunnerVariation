@@ -34,6 +34,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -82,6 +83,10 @@ public class RobotHardware {
     public ElapsedTime runtime = new ElapsedTime();
     public Orientation lastAngles = new Orientation();
     public double currAngle = 0.0;
+    public static final int BOTTOM_OUTTAKE_POSITION = 65;
+    public static final int MID_OUTTAKE_POSITION = 100;
+    public static final int TOP_OUTTAKE_POSITION = 600;
+    public static final double OUTTAKE_SPEED = 0.3 * 117 * 1425.1 / 60;
     static final double COUNTS_PER_MOTOR_REV = 537.7;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 96/25.4;     // For figuring circumference
@@ -108,8 +113,8 @@ public class RobotHardware {
         LB = myOpMode.hardwareMap.get(DcMotor.class, "LB");
         RF  = myOpMode.hardwareMap.get(DcMotor.class, "RF");
         RB = myOpMode.hardwareMap.get(DcMotor.class, "RB");
-        RL = myOpMode.hardwareMap.get(DcMotor.class, "RL");
-        LL = myOpMode.hardwareMap.get(DcMotor.class, "LL");
+        RL = myOpMode.hardwareMap.get(DcMotorEx.class, "RL");
+        LL = myOpMode.hardwareMap.get(DcMotorEx.class, "LL");
         rightClaw = myOpMode.hardwareMap.get(Servo.class, "RC");
         leftClaw = myOpMode.hardwareMap.get(Servo.class,"LC");
 
@@ -120,24 +125,24 @@ public class RobotHardware {
         LB.setDirection(DcMotor.Direction.REVERSE);
         RF.setDirection(DcMotor.Direction.FORWARD);
         RB.setDirection(DcMotor.Direction.FORWARD);
-        RL.setDirection(DcMotor.Direction.FORWARD);
-        LL.setDirection(DcMotor.Direction.FORWARD);
+        RL.setDirection(DcMotorEx.Direction.FORWARD);
+        LL.setDirection(DcMotorEx.Direction.FORWARD);
 
         //ALL MOTORS RUN WITH ENCODERS
         LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        LL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        RL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        LL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightClaw.setPosition(270);
+        RL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        LL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rightClaw.setPosition(1);
         leftClaw.setPosition(0);
         lift(0);
         setMotorPowers(0);
@@ -345,6 +350,36 @@ public class RobotHardware {
     }
     public void encoderDrive(double speed, double allMotors) {
         encoderDrive(speed, allMotors, allMotors, allMotors, allMotors);
+    }
+    public void moveUp() {
+        int targetPosition = 0;
+        if (RL.getCurrentPosition() < MID_OUTTAKE_POSITION && LL.getCurrentPosition() < MID_OUTTAKE_POSITION) {
+
+
+            targetPosition = MID_OUTTAKE_POSITION;
+        } else if (RL.getCurrentPosition() < TOP_OUTTAKE_POSITION && LL.getCurrentPosition() < TOP_OUTTAKE_POSITION) {
+
+
+            targetPosition = TOP_OUTTAKE_POSITION;
+            RL.setTargetPosition(targetPosition);
+            LL.setTargetPosition(targetPosition);
+            RL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            LL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            LL.setVelocity(OUTTAKE_SPEED);
+//            RL.setVelocity(OUTTAKE_SPEED);
+        }
+    }
+
+    public void moveDown() {
+        int targetPosition = 0;
+        if (RL.getCurrentPosition() >= MID_OUTTAKE_POSITION && LL.getCurrentPosition() >= MID_OUTTAKE_POSITION)
+            targetPosition = BOTTOM_OUTTAKE_POSITION;
+        LL.setTargetPosition(targetPosition);
+        RL.setTargetPosition(targetPosition);
+        LL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        RL.setVelocity(OUTTAKE_SPEED);
+//        LL.setVelocity(OUTTAKE_SPEED);
     }
 
 }
