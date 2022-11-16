@@ -24,7 +24,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.officialAutos.RobotHardware;
 @Autonomous
-@Config
 
 public class BlueTop extends LinearOpMode {
     RobotHardware robot = new RobotHardware(this);
@@ -45,6 +44,7 @@ public class BlueTop extends LinearOpMode {
 
         Trajectory tagA = drive.trajectoryBuilder(cycles.end())
                 .strafeRight(36)
+                .waitSeconds(3)
                 .back(20)
                 .build();
 
