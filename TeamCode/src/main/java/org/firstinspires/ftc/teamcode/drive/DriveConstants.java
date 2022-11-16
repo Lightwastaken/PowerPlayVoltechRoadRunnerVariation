@@ -17,11 +17,11 @@ public class DriveConstants {
     public static double TRACK_WIDTH = 16.414; // in
 
 
-    public static double kV = 3.0;
-    public static double kA = 0.025;
-    public static double kStatic = 0.04454;
+    public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
+    public static double kA = 0;
+    public static double kStatic = 0;
 
-    public static double MAX_VEL = 70;
+    public static double MAX_VEL = 52.48291908330528;
     public static double MAX_ACCEL = 52.48291908330528;
     public static double MAX_ANG_VEL = Math.toRadians(183.20030218106493);
     public static double MAX_ANG_ACCEL = Math.toRadians(183.20030218106493);
