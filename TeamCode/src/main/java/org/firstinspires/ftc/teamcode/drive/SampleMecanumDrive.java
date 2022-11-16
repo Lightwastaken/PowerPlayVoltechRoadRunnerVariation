@@ -186,8 +186,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         trajectorySequenceRunner.followTrajectorySequenceAsync(
                 trajectorySequenceBuilder(trajectory.start())
                         .addTrajectory(trajectory)
-                        .build();
-        )
+                        .build()
+        );
     }
 
     public void followTrajectory(Trajectory trajectory) {

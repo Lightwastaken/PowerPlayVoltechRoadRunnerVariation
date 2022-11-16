@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Servoconfig;
 import org.firstinspires.ftc.teamcode.cameraDetection;
 import org.firstinspires.ftc.teamcode.officialAutos.VISION.AprilTagAutonomousInitDetectionExample;
 import org.firstinspires.ftc.teamcode.officialAutos.VISION.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -37,8 +38,9 @@ public class BlueTop extends LinearOpMode {
         Pose2d start = new Pose2d(-36.4, 61.6, 0);
         drive.setPoseEstimate(start);
 
-        Trajectory blueTop = drive.trajectoryBuilder(start)
+        TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
                 .lineToSplineHeading(new Pose2d(-35.3, 8.3, Math.toRadians(-40)))
+                .waitSeconds(10)
                 .back(10)
                 .build();
 
@@ -64,7 +66,7 @@ public class BlueTop extends LinearOpMode {
         waitForStart();
 
         if(isStopRequested()) return;
-        drive.followTrajectory(blueTop);
+        drive.followTrajectorySequence(blueTop);
 
 
 

@@ -492,7 +492,7 @@ public class TrajectorySequenceBuilder {
         currentTrajectoryBuilder = new TrajectoryBuilder(lastPose, tangent, currentVelConstraint, currentAccelConstraint, resolution);
     }
 
-    public Trajectory build() {
+    public TrajectorySequence build() {
         pushPath();
 
         List<TrajectoryMarker> globalMarkers = convertMarkersToGlobal(
