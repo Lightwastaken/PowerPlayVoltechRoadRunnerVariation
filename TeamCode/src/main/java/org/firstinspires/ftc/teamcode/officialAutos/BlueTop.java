@@ -44,7 +44,6 @@ public class BlueTop extends LinearOpMode {
 
         Trajectory tagA = drive.trajectoryBuilder(cycles.end())
                 .strafeRight(36)
-                .waitSeconds(3)
                 .back(20)
                 .build();
 
@@ -76,9 +75,7 @@ public class BlueTop extends LinearOpMode {
         for (int i = 1; i <= numCycles; i++) {
             cycles = drive.trajectoryBuilder(new Pose2d(-43.2, 15.3, -40))
                     .lineToLinearHeading(new Pose2d(-53.8, 12.0, Math.toRadians(180)))
-                    .waitSeconds(0.5)
                     .lineToLinearHeading(new Pose2d(-24, 12, Math.toRadians(-90)))
-                    .waitSeconds(0.5)
                     .build();
         }
     }
