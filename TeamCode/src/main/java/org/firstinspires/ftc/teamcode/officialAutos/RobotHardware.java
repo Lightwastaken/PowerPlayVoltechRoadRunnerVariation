@@ -65,7 +65,7 @@ import org.firstinspires.ftc.teamcode.Servoconfig;
  *
  */
 
-public class RobotHardware {
+public class RobotHardware{
 
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
