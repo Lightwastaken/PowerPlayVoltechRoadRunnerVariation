@@ -155,10 +155,11 @@ public class RobotHardware{
         LL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         RTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightClaw.setPosition(1);
-        leftClaw.setPosition(0);
+        rightClaw.setPosition((double)267/270);
+        leftClaw.setPosition((double) 3/270);
         lift(0);
         setMotorPowers(0);
+        //(double) 267 / 270, (double) 3 / 270
 
 
 

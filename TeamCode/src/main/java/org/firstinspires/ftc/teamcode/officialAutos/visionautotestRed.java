@@ -179,7 +179,7 @@ public class visionautotestRed extends LinearOpMode
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT){
             TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(31)
+                    .forward(31.5)
                     .strafeLeft(40)
                     .build();
 
@@ -192,7 +192,7 @@ public class visionautotestRed extends LinearOpMode
 
         } else if (tagOfInterest.id == MIDDLE){
             TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(33)
+                    .forward(31.5)
                     .build();
 
             waitForStart();
@@ -202,7 +202,7 @@ public class visionautotestRed extends LinearOpMode
 
         } else {
             TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(33)
+                    .forward(31.5)
                     .strafeRight(40)
                     .build();
 
