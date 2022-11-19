@@ -35,6 +35,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -77,6 +78,8 @@ public class RobotHardware{
     public DcMotor RB  = null; //right back
     public DcMotor RL = null; //right motor(lift)
     public DcMotor LL = null; //left motor(lift)
+    public DcMotor RTL = null; //right top motors
+    public DcMotor LTL = null; //left top motor
     public Servo rightClaw = null; //right claw
     public Servo leftClaw = null; //left claw
 
@@ -116,8 +119,11 @@ public class RobotHardware{
         RB = myOpMode.hardwareMap.get(DcMotor.class, "RB");
         RL = myOpMode.hardwareMap.get(DcMotorEx.class, "RL");
         LL = myOpMode.hardwareMap.get(DcMotorEx.class, "LL");
+        RTL = myOpMode.hardwareMap.get(DcMotorEx.class, "RTL");
+        LTL = myOpMode.hardwareMap.get(DcMotorEx.class, "LTL");
         rightClaw = myOpMode.hardwareMap.get(Servo.class, "RC");
         leftClaw = myOpMode.hardwareMap.get(Servo.class,"LC");
+
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -128,6 +134,8 @@ public class RobotHardware{
         RB.setDirection(DcMotor.Direction.FORWARD);
         RL.setDirection(DcMotorEx.Direction.FORWARD);
         LL.setDirection(DcMotorEx.Direction.FORWARD);
+        RTL.setDirection(DcMotorEx.Direction.FORWARD);
+        LTL.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //ALL MOTORS RUN WITH ENCODERS
         LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -136,6 +144,8 @@ public class RobotHardware{
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         LL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+//        RTL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+//        LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -143,6 +153,8 @@ public class RobotHardware{
         RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         LL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        RTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightClaw.setPosition(1);
         leftClaw.setPosition(0);
         lift(0);
@@ -293,7 +305,7 @@ public class RobotHardware{
         while (runtime.milliseconds() < msTime);
     }
 
-   // below are the encoder driving methods, with three overloads
+    // below are the encoder driving methods, with three overloads
     public void encoderDrive(double speed, double leftFront, double rightFront, double leftBack, double rightBack) {
         int newLeftFrontTarget;
         int newLeftBackTarget;
@@ -366,6 +378,8 @@ public class RobotHardware{
     public  void lift(double power){
         RL.setPower(power);
         LL.setPower(power);
+        RTL.setPower(power);
+        LTL.setPower(power);
     }
 
     public void encoderDrive(double driveSpeed, int i, int i1) {
@@ -373,36 +387,5 @@ public class RobotHardware{
     public void encoderDrive(double speed, double allMotors) {
         encoderDrive(speed, allMotors, allMotors, allMotors, allMotors);
     }
-    public void moveUp() {
-        int targetPosition = 0;
-        if (RL.getCurrentPosition() < MID_OUTTAKE_POSITION && LL.getCurrentPosition() < MID_OUTTAKE_POSITION) {
-
-
-            targetPosition = MID_OUTTAKE_POSITION;
-        } else if (RL.getCurrentPosition() < TOP_OUTTAKE_POSITION && LL.getCurrentPosition() < TOP_OUTTAKE_POSITION) {
-
-
-            targetPosition = TOP_OUTTAKE_POSITION;
-            RL.setTargetPosition(targetPosition);
-            LL.setTargetPosition(targetPosition);
-            RL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            LL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            LL.setVelocity(OUTTAKE_SPEED);
-//            RL.setVelocity(OUTTAKE_SPEED);
-        }
-    }
-
-    public void moveDown() {
-        int targetPosition = 0;
-        if (RL.getCurrentPosition() >= MID_OUTTAKE_POSITION && LL.getCurrentPosition() >= MID_OUTTAKE_POSITION)
-            targetPosition = BOTTOM_OUTTAKE_POSITION;
-        LL.setTargetPosition(targetPosition);
-        RL.setTargetPosition(targetPosition);
-        LL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        RL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        RL.setVelocity(OUTTAKE_SPEED);
-//        LL.setVelocity(OUTTAKE_SPEED);
-    }
-
 }
 

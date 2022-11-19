@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.officialAutos.RobotHardware;
 public class teleop extends LinearOpMode {
 
     /* Declare OpMode members. */
- ;   // Use a Pushbot's hardware
-     RobotHardware robot = new RobotHardware(this);
+    ;   // Use a Pushbot's hardware
+    RobotHardware robot = new RobotHardware(this);
 
     @Override
     public void runOpMode() {
@@ -39,16 +39,15 @@ public class teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            if(gamepad1.left_bumper){
+            if (gamepad1.left_bumper) {
                 speedControl = 0.3;
-            } else{
-                speedControl = 1;
+            } else {
+                speedControl = 0.7;
             }
-            if(gamepad1.right_bumper){
+            if (gamepad1.right_bumper) {
                 speedControl = 0.5;
-            }
-            else{
-                speedControl = 1;
+            } else {
+                speedControl = 0.7;
             }
 
             // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
@@ -77,35 +76,54 @@ public class teleop extends LinearOpMode {
                 clawPosition(0, 1);
             }
             if (gamepad2.dpad_left) {
-                clawPosition((double) 267/270, (double) 3/270);
+                clawPosition((double) 267 / 270, (double) 3 / 270);
             }
 
-            if (gamepad2.x) {
-                slidesPosition(400,400);
+/*            if (gamepad2.y) {
+                robot.RL.setPower(-1);
+            } else if (gamepad2.a) {
+                robot.RL.setPower(1 );
+            }
+            else {
+                robot.RL.setPower(0.0);
             }
 
+            if (gamepad2.dpad_up) {
+                robot.LL.setPower(-1);
+            } else if (gamepad2.dpad_down) {
+                robot.LL.setPower(1);
+            }
+            else {
+                robot.LL.setPower(0.0);
+            }
+*/
+            if (gamepad2.dpad_up) {
+                robot.lift(-1);
+            } else if (gamepad2.dpad_down) {
+                robot.lift(1);
+            } else {
+                robot.lift(0);
 
-            telemetry.addData("LF Encoder", robot.LF.getCurrentPosition());
-            telemetry.addData("LB Encoder", robot.LB.getCurrentPosition());
-            telemetry.addData("RF Encoder", robot.RF.getCurrentPosition());
-            telemetry.addData("RB Encoder", robot.RB.getCurrentPosition());
-            telemetry.addData("LF Inches", robot.LF.getCurrentPosition()/COUNTS_PER_INCH);
-            telemetry.addData("LB Inches", robot.LB.getCurrentPosition()/COUNTS_PER_INCH);
-            telemetry.addData("RF Inches", robot.RF.getCurrentPosition()/COUNTS_PER_INCH);
-            telemetry.addData("RB Inches", robot.RB.getCurrentPosition()/COUNTS_PER_INCH);
-            telemetry.update();
+                telemetry.addData("LF Encoder", robot.LF.getCurrentPosition());
+                telemetry.addData("LB Encoder", robot.LB.getCurrentPosition());
+                telemetry.addData("RF Encoder", robot.RF.getCurrentPosition());
+                telemetry.addData("RB Encoder", robot.RB.getCurrentPosition());
+                telemetry.addData("LF Inches", robot.LF.getCurrentPosition() / COUNTS_PER_INCH);
+                telemetry.addData("LB Inches", robot.LB.getCurrentPosition() / COUNTS_PER_INCH);
+                telemetry.addData("RF Inches", robot.RF.getCurrentPosition() / COUNTS_PER_INCH);
+                telemetry.addData("RB Inches", robot.RB.getCurrentPosition() / COUNTS_PER_INCH);
+                telemetry.update();
 
-            // Pace this loop so jaw action is reasonable speed.
-            sleep(50);
+                // Pace this loop so jaw action is reasonable speed.
+                sleep(50);
+            }
+
         }
+
     }
-    public void clawPosition(double RC, double LC) {
+    public void clawPosition ( double RC, double LC) {
         robot.rightClaw.setPosition(RC);
         robot.leftClaw.setPosition(LC);
-    }
-    public void slidesPosition(int RL, int LL) {
-        robot.LL.setTargetPosition(LL);
-        robot.RL.setTargetPosition(RL);
     }
 }
 
