@@ -161,8 +161,6 @@ public class RobotHardware{
         setMotorPowers(0);
 
 
-        myOpMode.telemetry.addData(">", "Hardware Initialized");
-        myOpMode.telemetry.update();
 
         LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -173,17 +171,10 @@ public class RobotHardware{
         LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        telemetry.setMsTransmissionInterval(50);
-        telemetry.addData("status", "ready");
-        telemetry.update();
 
-        leftClaw.setPosition(Servoconfig.LEFTMIDSERVOPOSTION);
-        rightClaw.setPosition(Servoconfig.RIGHTMIDSERVOPOSTION);
-        lift(Servoconfig.liftPower);
+
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
     }
 
     /**
