@@ -36,7 +36,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="autovisonred", group="Pushbot")
+@Autonomous(name="autovision", group="Pushbot")
 public class visionautotestRed extends LinearOpMode
 {
     OpenCvCamera camera;
@@ -179,8 +179,8 @@ public class visionautotestRed extends LinearOpMode
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT){
             TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .strafeRight(24)
-                    .forward(24)
+                    .forward(31)
+                    .strafeLeft(40)
                     .build();
 
 
@@ -192,7 +192,7 @@ public class visionautotestRed extends LinearOpMode
 
         } else if (tagOfInterest.id == MIDDLE){
             TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(24)
+                    .forward(33)
                     .build();
 
             waitForStart();
@@ -202,8 +202,8 @@ public class visionautotestRed extends LinearOpMode
 
         } else {
             TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .strafeLeft(24)
-                    .forward(24)
+                    .forward(33)
+                    .strafeRight(40)
                     .build();
 
             waitForStart();
