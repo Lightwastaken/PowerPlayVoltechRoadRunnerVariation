@@ -22,7 +22,6 @@
 package org.firstinspires.ftc.teamcode.officialAutos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -37,8 +36,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="autovisiontest", group="Pushbot")
-public class visionautotest extends LinearOpMode
+@Autonomous(name="autovisionblue", group="Pushbot")
+public class visionautotestblue extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -180,67 +179,37 @@ public class visionautotest extends LinearOpMode
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT){
             TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .lineToSplineHeading(new Pose2d(-35.3, 8.3, Math.toRadians(-40)))
-                    .build();
-            Trajectory back = drive.trajectoryBuilder(blueTop.end())
-                    .back(10)
+                    .strafeLeft(24)
+                    .forward(24)
                     .build();
 
-            Trajectory tagA = drive.trajectoryBuilder(blueTop.end())
-                    .strafeRight(36)
-                    .build();
-            Trajectory back20 = drive.trajectoryBuilder(blueTop.end())
-                    .back(20)
-                    .build();
 
             waitForStart();
 
             if(isStopRequested()) return;
             drive.followTrajectorySequence(blueTop);
-            drive.followTrajectory(back);
-            drive.followTrajectory(tagA);
-            drive.followTrajectory(back20);
+
 
         } else if (tagOfInterest.id == MIDDLE){
             TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .lineToSplineHeading(new Pose2d(-35.3, 8.3, Math.toRadians(-40)))
+                    .forward(24)
                     .build();
-            Trajectory back = drive.trajectoryBuilder(blueTop.end())
-                    .back(10)
-                    .build();
-            Trajectory tagB = drive.trajectoryBuilder(blueTop.end())
-                    .strafeRight(12)
-                    .build();
-            Trajectory back20 = drive.trajectoryBuilder(blueTop.end())
-                    .back(20)
-                    .build();
+
             waitForStart();
 
             if(isStopRequested()) return;
             drive.followTrajectorySequence(blueTop);
-            drive.followTrajectory(back);
-            drive.followTrajectory(tagB);
-            drive.followTrajectory(back20);
+
         } else {
             TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .lineToSplineHeading(new Pose2d(-35.3, 8.3, Math.toRadians(-40)))
+                    .strafeRight(24)
+                    .forward(24)
                     .build();
-            Trajectory back = drive.trajectoryBuilder(blueTop.end())
-                    .back(10)
-                    .build();
-            Trajectory tagC = drive.trajectoryBuilder(blueTop.end())
-                    .strafeLeft(12)
-                    .build();
-            Trajectory back20 = drive.trajectoryBuilder(blueTop.end())
-                    .back(20)
-                    .build();
+
             waitForStart();
 
             if(isStopRequested()) return;
             drive.followTrajectorySequence(blueTop);
-            drive.followTrajectory(back);
-            drive.followTrajectory(tagC);
-            drive.followTrajectory(back20);
 
         }
 
