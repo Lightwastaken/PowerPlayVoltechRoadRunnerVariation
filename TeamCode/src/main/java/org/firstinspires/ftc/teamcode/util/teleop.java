@@ -31,8 +31,8 @@ public class teleop extends LinearOpMode {
          */
         robot.initHW();
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Say", "Hello Driver");    //
-        telemetry.update();
+//        telemetry.addData("Say", "Hello Driver");    //
+//        telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -104,18 +104,18 @@ public class teleop extends LinearOpMode {
             } else {
                 robot.lift(0);
 
-                telemetry.addData("LF Encoder", robot.LF.getCurrentPosition());
-                telemetry.addData("LB Encoder", robot.LB.getCurrentPosition());
-                telemetry.addData("RF Encoder", robot.RF.getCurrentPosition());
-                telemetry.addData("RB Encoder", robot.RB.getCurrentPosition());
-                telemetry.addData("LF Inches", robot.LF.getCurrentPosition() / COUNTS_PER_INCH);
-                telemetry.addData("LB Inches", robot.LB.getCurrentPosition() / COUNTS_PER_INCH);
-                telemetry.addData("RF Inches", robot.RF.getCurrentPosition() / COUNTS_PER_INCH);
-                telemetry.addData("RB Inches", robot.RB.getCurrentPosition() / COUNTS_PER_INCH);
-                telemetry.update();
-
-                // Pace this loop so jaw action is reasonable speed.
-                sleep(50);
+//                telemetry.addData("LF Encoder", robot.LF.getCurrentPosition());
+//                telemetry.addData("LB Encoder", robot.LB.getCurrentPosition());
+//                telemetry.addData("RF Encoder", robot.RF.getCurrentPosition());
+//                telemetry.addData("RB Encoder", robot.RB.getCurrentPosition());
+//                telemetry.addData("LF Inches", robot.LF.getCurrentPosition() / COUNTS_PER_INCH);
+//                telemetry.addData("LB Inches", robot.LB.getCurrentPosition() / COUNTS_PER_INCH);
+//                telemetry.addData("RF Inches", robot.RF.getCurrentPosition() / COUNTS_PER_INCH);
+//                telemetry.addData("RB Inches", robot.RB.getCurrentPosition() / COUNTS_PER_INCH);
+//                telemetry.update();
+//
+//                // Pace this loop so jaw action is reasonable speed.
+//                sleep(50);
             }
 
         }
