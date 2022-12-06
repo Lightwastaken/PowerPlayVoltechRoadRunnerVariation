@@ -27,7 +27,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.officialAutos.RobotHardware;
 @Autonomous(name = "Blue Top + Red Bottom", group = "Pushbot")
 
-public class BlueTop extends LinearOpMode {
+public class BlueBottom extends LinearOpMode {
     RobotHardware robot = new RobotHardware(this);
     SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -50,23 +50,23 @@ public class BlueTop extends LinearOpMode {
 
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-         @Override
-         public void onOpened() {
-             camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
-         }
-         @Override
-         public void onError(int errorCode) {}
-       });
+            @Override
+            public void onOpened() {
+                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+            }
+            @Override
+            public void onError(int errorCode) {}
+        });
 
         //Initalize hardware + program
         robot.initHW();
         waitForStart();
 
         //AUTO TRAJECTORIES
-        Pose2d start = new Pose2d(-36.4, 61.6, 0);
+        Pose2d start = new Pose2d(36, 60, Math.toRadians(-90));
         drive.setPoseEstimate(start);
 
-        TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
+        TrajectorySequence blueBottom = drive.trajectorySequenceBuilder(start)
                 .addDisplacementMarker(10, () -> {
                     robot.lift(0.15);
                 })
@@ -77,37 +77,37 @@ public class BlueTop extends LinearOpMode {
                 .addDisplacementMarker(65, () -> {
                     robot.lift(-0.15);
                 })
-                .lineToSplineHeading(new Pose2d(-35.3, 8.3, Math.toRadians(-40)))
+                .lineToSplineHeading(new Pose2d(34, 10, Math.toRadians(-130)))
                 .waitSeconds(0.5)
                 .turn(Math.toRadians(40))
                 .back(2)
-                .strafeLeft(10)
+                .strafeRight(10)
                 .build();
 
         TrajectorySequence tagA = drive.trajectorySequenceBuilder(cycles.end())
-                .strafeLeft(6)
-                .splineToConstantHeading(new Vector2d(-12, 34), Math.toRadians(90))
-                .turn(Math.toRadians(180))
+                .strafeLeft(20)
+                .splineToConstantHeading(new Vector2d(60, 36), Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .build();
 
         TrajectorySequence tagB = drive.trajectorySequenceBuilder(cycles.end())
-                .strafeRight(4.5)
-                .splineToConstantHeading(new Vector2d(-36, 34), Math.toRadians(90))
-                .turn(Math.toRadians(90))
+                .strafeLeft(4.5)
+                .splineToConstantHeading(new Vector2d(36, 34), Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .build();
 
         TrajectorySequence tagC = drive.trajectorySequenceBuilder(cycles.end())
-                .strafeRight(26)
-                .splineToConstantHeading(new Vector2d(-55, 34), Math.toRadians(90))
-                .turn(Math.toRadians(90))
-                .back(5)
+                .strafeRight(6.5)
+                .splineToConstantHeading(new Vector2d(10, 36), Math.toRadians(90))
+                .turn(Math.toRadians(180))
+                .strafeRight(2)
                 .build();
 
 
         if(isStopRequested()) return;
 
         //AUTONOMOUS PATH
-        drive.followTrajectorySequence(blueTop);
+        drive.followTrajectorySequence(blueBottom);
         cycle(3);
         if (aprilTagID.getID() == 3) {
             drive.followTrajectorySequence(tagC);
@@ -116,6 +116,7 @@ public class BlueTop extends LinearOpMode {
         } else {
             drive.followTrajectorySequence(tagA);
         }
+
     }
 
     TrajectorySequence cycles;
@@ -138,9 +139,9 @@ public class BlueTop extends LinearOpMode {
                         robot.lift(0);
                         robot.claw.setPosition((double) 255/270);
                     })
-                    .lineToLinearHeading(new Pose2d(-53.8, 12.0, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(55, 12, Math.toRadians(0)))
                     .waitSeconds(0.5)
-                    .lineToLinearHeading(new Pose2d(-24, 12, Math.toRadians(-90)))
+                    .lineToLinearHeading(new Pose2d(24, 12, Math.toRadians(-90)))
                     .waitSeconds(0.5)
                     .build();
         }

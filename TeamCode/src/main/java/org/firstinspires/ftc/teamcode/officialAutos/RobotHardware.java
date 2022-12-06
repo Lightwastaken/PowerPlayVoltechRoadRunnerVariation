@@ -80,8 +80,7 @@ public class RobotHardware{
     public DcMotor LL = null; //left motor(lift)
     public DcMotor RTL = null; //right top motors
     public DcMotor LTL = null; //left top motor
-    public Servo rightClaw = null; //right claw
-    public Servo leftClaw = null; //left claw
+    public Servo claw = null; //left claw
 
     SensorIMU imuu = new SensorIMU();
     public ElapsedTime runtime = new ElapsedTime();
@@ -121,9 +120,7 @@ public class RobotHardware{
         LL = myOpMode.hardwareMap.get(DcMotorEx.class, "LL");
         RTL = myOpMode.hardwareMap.get(DcMotorEx.class, "RTL");
         LTL = myOpMode.hardwareMap.get(DcMotorEx.class, "LTL");
-        rightClaw = myOpMode.hardwareMap.get(Servo.class, "RC");
-        leftClaw = myOpMode.hardwareMap.get(Servo.class,"LC");
-
+        claw = myOpMode.hardwareMap.get(Servo.class, "CLAW");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -155,8 +152,7 @@ public class RobotHardware{
         LL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         RTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightClaw.setPosition((double)267/270);
-        leftClaw.setPosition((double) 3/270);
+        claw.setPosition((double) 3/270);
         lift(0);
         setMotorPowers(0);
         //(double) 267 / 270, (double) 3 / 270

@@ -73,10 +73,10 @@ public class teleop extends LinearOpMode {
 
             // non toggle claws
             if (gamepad1.dpad_right) {
-                clawPosition(0, 1);
+                clawPosition(1);
             }
             if (gamepad1.dpad_left) {
-                clawPosition((double) 267 / 270, (double) 3 / 270);
+                clawPosition((double) 3 / 270);
             }
 
 /*            if (gamepad2.y) {
@@ -121,9 +121,8 @@ public class teleop extends LinearOpMode {
         }
 
     }
-    public void clawPosition ( double RC, double LC) {
-        robot.rightClaw.setPosition(RC);
-        robot.leftClaw.setPosition(LC);
+    public void clawPosition (double position) {
+        robot.claw.setPosition(position);
     }
 }
 

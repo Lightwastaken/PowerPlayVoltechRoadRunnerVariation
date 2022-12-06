@@ -36,7 +36,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="autovision", group="Pushbot")
 public class visionautotestRed extends LinearOpMode
 {
     OpenCvCamera camera;
@@ -85,20 +84,10 @@ public class visionautotestRed extends LinearOpMode
 
             }
         });
-        RobotHardware robot = new RobotHardware(this);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d start = new Pose2d(-36.4, 61.6, 0);
-        drive.setPoseEstimate(start);
-
-
 
 
         telemetry.setMsTransmissionInterval(50);
 
-        /*
-         * The INIT-loop:
-         * This REPLACES waitForStart!
-         */
         while (!isStarted() && !isStopRequested())
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
@@ -109,7 +98,7 @@ public class visionautotestRed extends LinearOpMode
 
                 for(AprilTagDetection tag : currentDetections)
                 {
-                    if(tag.id == LEFT||tag.id == MIDDLE || tag.id == RIGHT)
+                    if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT)
                     {
                         tagOfInterest = tag;
                         tagFound = true;
@@ -158,10 +147,6 @@ public class visionautotestRed extends LinearOpMode
             sleep(20);
         }
 
-        /*
-         * The START command just came in: now work off the latest snapshot acquired
-         * during the init loop.
-         */
 
         /* Update the telemetry */
         if(tagOfInterest != null)
@@ -170,51 +155,14 @@ public class visionautotestRed extends LinearOpMode
             tagToTelemetry(tagOfInterest);
             telemetry.update();
         }
-        else
-        {
+        else {
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
+    }
 
-        /* Actually do something useful */
-        if (tagOfInterest == null || tagOfInterest.id == LEFT){
-            TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(31.5)
-                    .strafeLeft(40)
-                    .build();
-
-
-            waitForStart();
-
-            if(isStopRequested()) return;
-            drive.followTrajectorySequence(blueTop);
-
-
-        } else if (tagOfInterest.id == MIDDLE){
-            TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(31.5)
-                    .build();
-
-            waitForStart();
-
-            if(isStopRequested()) return;
-            drive.followTrajectorySequence(blueTop);
-
-        } else {
-            TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(31.5)
-                    .strafeRight(40)
-                    .build();
-
-            waitForStart();
-
-            if(isStopRequested()) return;
-            drive.followTrajectorySequence(blueTop);
-
-        }
-
-
-        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
+    public int getTOI() {
+        return tagOfInterest.id;
     }
 
     void tagToTelemetry(AprilTagDetection detection)
