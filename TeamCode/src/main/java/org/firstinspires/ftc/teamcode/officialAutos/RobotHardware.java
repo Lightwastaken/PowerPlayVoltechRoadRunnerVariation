@@ -116,8 +116,6 @@ public class RobotHardware{
         LB = myOpMode.hardwareMap.get(DcMotor.class, "LB");
         RF  = myOpMode.hardwareMap.get(DcMotor.class, "RF");
         RB = myOpMode.hardwareMap.get(DcMotor.class, "RB");
-        RL = myOpMode.hardwareMap.get(DcMotorEx.class, "RL");
-        LL = myOpMode.hardwareMap.get(DcMotorEx.class, "LL");
         RTL = myOpMode.hardwareMap.get(DcMotorEx.class, "RTL");
         LTL = myOpMode.hardwareMap.get(DcMotorEx.class, "LTL");
         claw = myOpMode.hardwareMap.get(Servo.class, "CLAW");
@@ -129,8 +127,6 @@ public class RobotHardware{
         LB.setDirection(DcMotor.Direction.REVERSE);
         RF.setDirection(DcMotor.Direction.FORWARD);
         RB.setDirection(DcMotor.Direction.FORWARD);
-        RL.setDirection(DcMotorEx.Direction.FORWARD);
-        LL.setDirection(DcMotorEx.Direction.FORWARD);
         RTL.setDirection(DcMotorEx.Direction.FORWARD);
         LTL.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -139,17 +135,13 @@ public class RobotHardware{
         LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        LL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-//        RTL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-//        LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RTL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        RL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        LL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+//        LL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         RTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         claw.setPosition((double) 3/270);
@@ -364,8 +356,6 @@ public class RobotHardware{
 
     }
     public  void lift(double power){
-        RL.setPower(power);
-        LL.setPower(power);
         RTL.setPower(power);
         LTL.setPower(power);
     }
