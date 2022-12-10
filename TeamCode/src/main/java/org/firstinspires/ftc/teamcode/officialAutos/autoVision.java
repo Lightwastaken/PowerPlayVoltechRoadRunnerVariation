@@ -179,12 +179,12 @@ public class autoVision extends LinearOpMode
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT){
             TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(32)
-                    .strafeLeft(35)
+                    .forward(27)
+                    .strafeLeft(27)
                     .build();
 
 
-            waitForStart();
+
 
             if(isStopRequested()) return;
             drive.followTrajectorySequence(blueTop);
@@ -195,18 +195,15 @@ public class autoVision extends LinearOpMode
                     .forward(35)
                     .build();
 
-            waitForStart();
-
             if(isStopRequested()) return;
             drive.followTrajectorySequence(blueTop);
 
         } else {
             TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(32)
-                    .strafeRight(35)
+                    .forward(27)
+                    .strafeRight(27)
                     .build();
 
-            waitForStart();
 
             if(isStopRequested()) return;
             drive.followTrajectorySequence(blueTop);
