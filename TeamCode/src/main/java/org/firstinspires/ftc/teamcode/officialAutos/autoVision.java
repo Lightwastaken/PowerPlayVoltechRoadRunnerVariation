@@ -36,8 +36,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="autovisonred", group="Pushbot")
-public class visionautotestRed extends LinearOpMode
+@Autonomous(name="visionplsworkimbeggingAAAA", group="Pushbot")
+public class autoVision extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -179,8 +179,8 @@ public class visionautotestRed extends LinearOpMode
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT){
             TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .strafeRight(24)
-                    .forward(24)
+                    .forward(32)
+                    .strafeLeft(35)
                     .build();
 
 
@@ -192,7 +192,7 @@ public class visionautotestRed extends LinearOpMode
 
         } else if (tagOfInterest.id == MIDDLE){
             TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(24)
+                    .forward(35)
                     .build();
 
             waitForStart();
@@ -202,8 +202,8 @@ public class visionautotestRed extends LinearOpMode
 
         } else {
             TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .strafeLeft(24)
-                    .forward(24)
+                    .forward(32)
+                    .strafeRight(35)
                     .build();
 
             waitForStart();

@@ -17,9 +17,9 @@ public class DriveConstants {
     public static double TRACK_WIDTH = 16.71; // in
 
 
-    public static double kV = 0.1 / rpmToVelocity(MAX_RPM);
-    public static double kA = 0.4;
-    public static double kStatic = 0;
+    public static double kV = 0.01723 / rpmToVelocity(MAX_RPM);
+    public static double kA = 0.00031 ;
+    public static double kStatic = 0.06287;
 
     public static double MAX_VEL = 52.48291908330528;
     public static double MAX_ACCEL = 52.48291908330528;
