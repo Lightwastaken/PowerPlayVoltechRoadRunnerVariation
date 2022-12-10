@@ -76,7 +76,7 @@ public class RobotHardware{
     public DcMotor LB   = null; //left back(chassis)
     public DcMotor RF  = null; //right front(chassis)
     public DcMotor RB  = null; //right back
-    public DcMotor RL = null; //right motor(lift)
+    //public DcMotor RL = null; //right motor(lift)
     public DcMotor LL = null; //left motor(lift)
     public DcMotor RTL = null; //right top motors
     public DcMotor LTL = null; //left top motor
@@ -155,11 +155,15 @@ public class RobotHardware{
         LB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
 
@@ -353,6 +357,48 @@ public class RobotHardware{
         LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+    public void liftEncoderDrive(double speed, double rightlift, double leftLift) {
+        int heightTarget;
+        int heightTarget2;
+        if (linearOpMode.opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            heightTarget = LTL.getCurrentPosition() + (int) (rightlift * COUNTS_PER_INCH);
+            heightTarget2 = RTL.getCurrentPosition() + (int) (leftLift * COUNTS_PER_INCH);
+            telemetry.addData("old target", LB.getCurrentPosition());
+            LTL.setTargetPosition(heightTarget);
+            RTL.setTargetPosition(heightTarget2);
+
+
+            // Turn On RUN_TO_POSITION
+            LTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            RTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            LTL.setPower(Math.abs(speed));
+            RTL.setPower(Math.abs(speed));
+
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+
+        }
+
+        RTL.setPower(0);
+        LTL.setPower(0);
+
+        // Turn off RUN_TO_POSITION
+        RTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
     }
     public  void lift(double power){

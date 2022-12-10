@@ -25,7 +25,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.officialAutos.RobotHardware;
-@Autonomous(name = "Blue Top + Red Bottom", group = "Pushbot")
+@Autonomous(name = "Blue Bottom + Red Top", group = "Pushbot")
 
 public class BlueBottom extends LinearOpMode {
     RobotHardware robot = new RobotHardware(this);

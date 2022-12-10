@@ -38,7 +38,7 @@ public class teleop extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-
+            /*
             if (gamepad1.left_bumper) {
                 speedControl = 0.3;
             } else {
@@ -49,6 +49,7 @@ public class teleop extends LinearOpMode {
             } else {
                 speedControl = 0.7;
             }
+            */
 
             // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
@@ -66,23 +67,23 @@ public class teleop extends LinearOpMode {
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
-            robot.LF.setPower(frontLeftPower * speedControl);
-            robot.LB.setPower(backLeftPower * speedControl);
-            robot.RF.setPower(frontRightPower * speedControl);
-            robot.RB.setPower(backRightPower * speedControl);
+            robot.LF.setPower(frontLeftPower);
+            robot.LB.setPower(backLeftPower);
+            robot.RF.setPower(frontRightPower);
+            robot.RB.setPower(backRightPower);
 
             // non toggle claws
             if (gamepad1.x) {
                 robot.claw.setPosition(1);
             }
             if (gamepad1.b) {
-                robot.claw.setPosition((double) 230/270);
+                robot.claw.setPosition(0);
             }
 
-            if (gamepad1.dpad_up) {
-                robot.lift(-1);
-            } else if (gamepad1.dpad_down) {
-                robot.lift(1);
+            if (gamepad1.right_bumper) {
+                robot.lift(0.1);
+            } else if (gamepad1.left_bumper) {
+                robot.lift(-0.1);
             } else {
                 robot.lift(0);
 
@@ -97,7 +98,7 @@ public class teleop extends LinearOpMode {
 //                telemetry.update();
 //
 //                // Pace this loop so jaw action is reasonable speed.
-//                sleep(50);
+                sleep(50);
             }
 
         }
