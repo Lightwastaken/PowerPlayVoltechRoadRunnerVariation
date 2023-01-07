@@ -179,7 +179,7 @@ public class autoVision extends LinearOpMode
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT){
             TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(27)
+                    .forward(26)
                     .strafeLeft(27)
                     .build();
 
@@ -200,7 +200,7 @@ public class autoVision extends LinearOpMode
 
         } else {
             TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(27)
+                    .forward(26)
                     .strafeRight(27)
                     .build();
 

@@ -81,9 +81,9 @@ public class teleop extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                robot.lift(0.1);
+                robot.lift(0.3);
             } else if (gamepad1.left_bumper) {
-                robot.lift(-0.1);
+                robot.lift(-0.3);
             } else {
                 robot.lift(0);
 
