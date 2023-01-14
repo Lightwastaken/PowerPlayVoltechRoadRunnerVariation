@@ -75,12 +75,10 @@ public class RobotHardware{
     public DcMotor LF   = null; //left front(chassis)
     public DcMotor LB   = null; //left back(chassis)
     public DcMotor RF  = null; //right front(chassis)
-    public DcMotor RB  = null; //right back
-    //public DcMotor RL = null; //right motor(lift)
-    public DcMotor LL = null; //left motor(lift)
-    public DcMotor RTL = null; //right top motors
-    public DcMotor LTL = null; //left top motor
-    public Servo claw = null; //left claw
+    public DcMotor RB  = null; //right back(chassis)
+    public DcMotor RTL = null; //right motor(lift)
+    public DcMotor LTL = null; //left motor(lift)
+    public Servo claw = null; //claw
 
     SensorIMU imuu = new SensorIMU();
     public ElapsedTime runtime = new ElapsedTime();
@@ -128,20 +126,20 @@ public class RobotHardware{
         RF.setDirection(DcMotor.Direction.FORWARD);
         RB.setDirection(DcMotor.Direction.FORWARD);
         RTL.setDirection(DcMotorEx.Direction.FORWARD);
-        LTL.setDirection(DcMotorSimple.Direction.REVERSE);
+        LTL.setDirection(DcMotorEx.Direction.REVERSE);
 
         //ALL MOTORS RUN WITH ENCODERS
         LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RTL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        RTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        LL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         claw.setPosition((double) 3/270);
@@ -162,8 +160,8 @@ public class RobotHardware{
         LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
 

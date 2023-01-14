@@ -8,8 +8,8 @@ public class DriveConstants {
     public static final double TICKS_PER_REV = 537.6;
     public static final double MAX_RPM = 312;
 
-    public static final boolean RUN_USING_ENCODER = false;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
+    public static final boolean RUN_USING_ENCODER = true;
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(16, 0, 0,
             getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
     public static double WHEEL_RADIUS = 1.8898; // in
@@ -18,11 +18,11 @@ public class DriveConstants {
 
 
     public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
-    public static double kA = 0 ;
+    public static double kA = 0;
     public static double kStatic = 0;
 
-    public static double MAX_VEL = 52.48291908330528;
-    public static double MAX_ACCEL = 52.48291908330528;
+    public static double MAX_VEL = 30.0;
+    public static double MAX_ACCEL = 30.0;
     public static double MAX_ANG_VEL = Math.toRadians(183.20030218106493);
     public static double MAX_ANG_ACCEL = Math.toRadians(183.20030218106493);
 
