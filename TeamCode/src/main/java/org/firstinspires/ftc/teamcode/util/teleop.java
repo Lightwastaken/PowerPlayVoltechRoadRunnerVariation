@@ -64,14 +64,11 @@ public class teleop extends LinearOpMode {
             robot.RB.setPower(backRightPower);
 
             // non toggle claws
-            if (gamepad1.left_bumper && active == false) {
-                active = true;
+            if (gamepad1.left_bumper) {
                 robot.claw.setPosition(1);
-
             }
 
-            if (gamepad1.left_bumper && active == true){
-                active = false;
+            if (gamepad1.left_trigger > 0.1) {
                 robot.claw.setPosition(0);
             }
 

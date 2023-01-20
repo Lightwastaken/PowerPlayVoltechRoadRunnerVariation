@@ -22,6 +22,8 @@
 package org.firstinspires.ftc.teamcode.officialAutos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -36,9 +38,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="visionplsworkimbeggingAAAA", group="Pushbot")
-public class autoVision extends LinearOpMode
-{
+@Autonomous(name="red terminal, no cycle", group="Pushbot")
+public class autoVision extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -69,7 +70,7 @@ public class autoVision extends LinearOpMode
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-
+        RobotHardware robot = new RobotHardware(this);
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -85,16 +86,13 @@ public class autoVision extends LinearOpMode
 
             }
         });
-        RobotHardware robot = new RobotHardware(this);
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d start = new Pose2d(-36.4, 61.6, 0);
+        Pose2d start = new Pose2d(-36, -60, 0);
         drive.setPoseEstimate(start);
 
-
-
-
         telemetry.setMsTransmissionInterval(50);
-
+        robot.initHW();
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
@@ -176,39 +174,61 @@ public class autoVision extends LinearOpMode
             telemetry.update();
         }
 
+        TrajectorySequence RedTerminalRedAlliance = drive.trajectorySequenceBuilder(start)
+                .addDisplacementMarker(23, () -> {
+                    robot.claw.setPosition(0);
+                })
+                .addTemporalMarker(5, () -> {
+                    robot.lift(0.1);
+                })
+                .addTemporalMarker(8, () -> {
+                    robot.lift(0);
+                })
+                .addTemporalMarker(8.25, () -> {
+                    robot.lift(-0.05);
+                })
+                .addTemporalMarker(8.8, () -> {
+                    robot.claw.setPosition(1);
+                })
+                .addTemporalMarker(12, () -> {
+                    robot.lift(-0.15);
+                })
+                .strafeRight(22)
+                .forward(48)
+                .turn(Math.toRadians(36.5))
+                .waitSeconds(1)
+                .forward(10)
+                .waitSeconds(2)
+                .back(10)
+                .turn(Math.toRadians(-36.5))
+                .strafeLeft(12)
+                .build();
+
+        TrajectorySequence leftTOI = drive.trajectorySequenceBuilder(RedTerminalRedAlliance.end())
+                .strafeLeft(52)
+                .build();
+
+        TrajectorySequence middleTOI = drive.trajectorySequenceBuilder(RedTerminalRedAlliance.end())
+                .back(0.25)
+                .strafeLeft(26)
+                .build();
+
+        TrajectorySequence rightTOI = drive.trajectorySequenceBuilder(RedTerminalRedAlliance.end())
+                .back(3)
+                .build();
+
+
         /* Actually do something useful */
-        if (tagOfInterest == null || tagOfInterest.id == LEFT){
-            TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(26)
-                    .strafeLeft(27)
-                    .build();
+        drive.followTrajectorySequence(RedTerminalRedAlliance);
 
-
-
-
-            if(isStopRequested()) return;
-            drive.followTrajectorySequence(blueTop);
-
-
-        } else if (tagOfInterest.id == MIDDLE){
-            TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(35)
-                    .build();
-
-            if(isStopRequested()) return;
-            drive.followTrajectorySequence(blueTop);
-
-        } else {
-            TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(26)
-                    .strafeRight(27)
-                    .build();
-
-
-            if(isStopRequested()) return;
-            drive.followTrajectorySequence(blueTop);
-
+        if (tagOfInterest == null || tagOfInterest.id == LEFT) { //LEFT parking
+            drive.followTrajectorySequence(leftTOI);
+        } else if (tagOfInterest.id == MIDDLE) { //MIDDLE parking
+            drive.followTrajectorySequence(middleTOI);
+        } else { //RIGHT parking
+            drive.followTrajectorySequence(rightTOI);
         }
+
 
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */

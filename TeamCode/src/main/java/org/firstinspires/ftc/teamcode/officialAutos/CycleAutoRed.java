@@ -23,6 +23,7 @@ package org.firstinspires.ftc.teamcode.officialAutos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -35,10 +36,12 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
+@Disabled
+@Autonomous(name="Red terminal autos", group="Pushbot")
+public class CycleAutoRed extends LinearOpMode {
+    static Pose2d preloadEnd;
+    static Pose2d cycleEnd;
 
-@Autonomous(name="autovisonred", group="Pushbot")
-public class visionautotestRed extends LinearOpMode
-{
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -62,6 +65,8 @@ public class visionautotestRed extends LinearOpMode
     int RIGHT = 3;
 
     AprilTagDetection tagOfInterest = null;
+    SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+    RobotHardware robot = new RobotHardware(this);
 
     @Override
     public void runOpMode()
@@ -69,7 +74,6 @@ public class visionautotestRed extends LinearOpMode
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -85,16 +89,12 @@ public class visionautotestRed extends LinearOpMode
 
             }
         });
-        RobotHardware robot = new RobotHardware(this);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d start = new Pose2d(-36.4, 61.6, 0);
+
+        Pose2d start = new Pose2d(-36, -60, 0);
         drive.setPoseEstimate(start);
 
-
-
-
         telemetry.setMsTransmissionInterval(50);
-
+        robot.initHW();
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
@@ -176,42 +176,52 @@ public class visionautotestRed extends LinearOpMode
             telemetry.update();
         }
 
+        TrajectorySequence preloadDeliver = drive.trajectorySequenceBuilder(start)
+                .addDisplacementMarker(23, () -> { robot.claw.setPosition(0); })
+                .strafeRight(25)
+                .addTemporalMarker(() -> { robot.lift(0.075); })
+                .lineToLinearHeading(new Pose2d(-11, -16, Math.toRadians(127.5)))
+                .addTemporalMarker(() -> { robot.lift(0); })
+                .forward(10)
+                .addTemporalMarker(() -> { robot.lift(-0.01); })
+                .waitSeconds(1)
+                .addTemporalMarker(() -> {
+                    robot.claw.setPosition(1);
+                    robot.lift(0.01);
+                })
+                .waitSeconds(0.75)
+                .lineToLinearHeading(new Pose2d(-11, -13, Math.toRadians(90)))
+                .strafeLeft(11)
+                .build();
+
+        preloadEnd = preloadDeliver.end();
+
+        TrajectorySequence leftTOI = drive.trajectorySequenceBuilder(cycleEnd)
+                .strafeLeft(33)
+                .build();
+
+        TrajectorySequence middleTOI = drive.trajectorySequenceBuilder(cycleEnd)
+                .back(0.25)
+                .strafeLeft(13)
+                .build();
+
+        TrajectorySequence rightTOI = drive.trajectorySequenceBuilder(cycleEnd)
+                .back(0.25)
+                .strafeRight(13)
+                .build();
+
+
         /* Actually do something useful */
-        if (tagOfInterest == null || tagOfInterest.id == LEFT){
-            TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .strafeRight(24)
-                    .forward(24)
-                    .build();
-
-
-            waitForStart();
-
-            if(isStopRequested()) return;
-            drive.followTrajectorySequence(blueTop);
-
-
-        } else if (tagOfInterest.id == MIDDLE){
-            TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(24)
-                    .build();
-
-            waitForStart();
-
-            if(isStopRequested()) return;
-            drive.followTrajectorySequence(blueTop);
-
-        } else {
-            TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .strafeLeft(24)
-                    .forward(24)
-                    .build();
-
-            waitForStart();
-
-            if(isStopRequested()) return;
-            drive.followTrajectorySequence(blueTop);
-
+        drive.followTrajectorySequence(preloadDeliver);
+        cycles(1);
+        if (tagOfInterest == null || tagOfInterest.id == LEFT) { //LEFT parking
+            drive.followTrajectorySequence(leftTOI);
+        } else if (tagOfInterest.id == MIDDLE) { //MIDDLE parking
+            drive.followTrajectorySequence(middleTOI);
+        } else { //RIGHT parking
+            drive.followTrajectorySequence(rightTOI);
         }
+
 
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
@@ -226,5 +236,39 @@ public class visionautotestRed extends LinearOpMode
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+    }
+
+    public void cycles(int numCycles) {
+        for (int i = 0; i < numCycles; i++) {
+            TrajectorySequence cycle = drive.trajectorySequenceBuilder(preloadEnd)
+                    .UNSTABLE_addDisplacementMarkerOffset(12 - 2 * i, () -> {
+                        robot.claw.setPosition(1);
+                        robot.lift(-0.01);
+                    })
+                    .lineToSplineHeading(new Pose2d(-57, -11.5, Math.toRadians(180)))
+                    .addDisplacementMarker(() -> {
+                        robot.lift(0);
+                    })
+                    .waitSeconds(0.25)
+                    .addTemporalMarker(() -> {
+                        robot.claw.setPosition(0);
+                    })
+                    .waitSeconds(0.3)
+                    .addTemporalMarker(() -> {
+                        robot.lift(0.1);
+                    })
+                    .waitSeconds(1)
+                    .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(90)))
+                    .waitSeconds(0.5)
+                    .addTemporalMarker(() -> { robot.lift(-0.01); })
+                    .waitSeconds(1)
+                    .addTemporalMarker(() -> {
+                        robot.claw.setPosition(1);
+                        robot.lift(0.05);
+                    })
+                    .waitSeconds(0.5)
+                    .build();
+            cycleEnd = cycle.end();
+        }
     }
 }

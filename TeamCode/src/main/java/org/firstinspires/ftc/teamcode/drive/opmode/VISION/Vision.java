@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.officialAutos.VISION;
+package org.firstinspires.ftc.teamcode.drive.opmode.VISION;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Mat;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.firstinspires.ftc.teamcode.officialAutos.VISION.AprilTagDetectionPipeline;
 
 import java.util.ArrayList;
 

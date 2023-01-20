@@ -19,23 +19,29 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.officialAutos.VISION;
+package org.firstinspires.ftc.teamcode.officialAutos;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.officialAutos.VISION.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
+@Disabled
+@Autonomous(name="Blue terminal autos", group="Pushbot")
+public class CycleAutoBlue extends LinearOpMode {
+    static Pose2d preloadEnd;
+    static Pose2d cycleEnd;
 
-@Autonomous(name="visiontest", group="Pushbot")
-public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
-{
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -53,12 +59,14 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-   // Tag ID 18 from the 36h11 family
+    // Tag ID 18 from the 36h11 family
     int LEFT = 1;
     int MIDDLE = 2;
     int RIGHT = 3;
 
     AprilTagDetection tagOfInterest = null;
+    SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+    RobotHardware robot = new RobotHardware(this);
 
     @Override
     public void runOpMode()
@@ -66,7 +74,6 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -83,8 +90,11 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             }
         });
 
-        telemetry.setMsTransmissionInterval(50);
+        Pose2d start = new Pose2d(36, -60, 0);
+        drive.setPoseEstimate(start);
 
+        telemetry.setMsTransmissionInterval(50);
+        robot.initHW();
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
@@ -166,19 +176,58 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             telemetry.update();
         }
 
-        /* Actually do something useful */
-        if (tagOfInterest == null || tagOfInterest.id == LEFT){
+        TrajectorySequence preloadDeliver = drive.trajectorySequenceBuilder(start)
+                .addDisplacementMarker(23, () -> { robot.claw.setPosition(0); })
+                .strafeLeft(25)
+                .addTemporalMarker(() -> { robot.lift(0.1); })
+                .lineToLinearHeading(new Pose2d(-11, -16, Math.toRadians(37.5)))
+                .addTemporalMarker(() -> { robot.lift(0); })
+                .forward(10)
+                .addTemporalMarker(() -> { robot.lift(-0.01); })
+                .waitSeconds(1)
+                .addTemporalMarker(() -> {
+                    robot.claw.setPosition(1);
+                })
+                .waitSeconds(0.5)
+                .addTemporalMarker(() -> {
+                    robot.lift(0.1);
+                })
+                .waitSeconds(0.25)
+                .lineToLinearHeading(new Pose2d(-11, -13, Math.toRadians(90)))
+                .strafeRight(11)
+                .build();
 
-        } else if (tagOfInterest.id == MIDDLE){
+        preloadEnd = preloadDeliver.end();
+
+        TrajectorySequence leftTOI = drive.trajectorySequenceBuilder(cycleEnd)
+                .strafeLeft(33)
+                .build();
+
+        TrajectorySequence middleTOI = drive.trajectorySequenceBuilder(cycleEnd)
+                .back(0.25)
+                .strafeLeft(13)
+                .build();
+
+        TrajectorySequence rightTOI = drive.trajectorySequenceBuilder(cycleEnd)
+                .back(0.25)
+                .strafeRight(13)
+                .build();
 
 
-        } else {
-
+        //TRAJECTORY FOLLOWED
+        drive.followTrajectorySequence(preloadDeliver);
+        cycles(1);
+        if (tagOfInterest == null || tagOfInterest.id == LEFT) { //LEFT parking
+            drive.followTrajectorySequence(leftTOI);
+        } else if (tagOfInterest.id == MIDDLE) { //MIDDLE parking
+            drive.followTrajectorySequence(middleTOI);
+        } else { //RIGHT parking
+            drive.followTrajectorySequence(rightTOI);
         }
 
 
+
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        while (opModeIsActive()) {sleep(20);}
     }
 
     void tagToTelemetry(AprilTagDetection detection)
@@ -190,5 +239,39 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+    }
+
+    public void cycles(int numCycles) {
+        for (int i = 0; i < numCycles; i++) {
+            TrajectorySequence cycle = drive.trajectorySequenceBuilder(preloadEnd)
+                    .UNSTABLE_addDisplacementMarkerOffset(12 - 2 * i, () -> {
+                        robot.claw.setPosition(1);
+                        robot.lift(-0.01);
+                    })
+                    .lineToSplineHeading(new Pose2d(57, -11.5, Math.toRadians(0)))
+                    .addDisplacementMarker(() -> {
+                        robot.lift(0);
+                    })
+                    .waitSeconds(0.25)
+                    .addTemporalMarker(() -> {
+                        robot.claw.setPosition(0);
+                    })
+                    .waitSeconds(0.3)
+                    .addTemporalMarker(() -> {
+                        robot.lift(0.1);
+                    })
+                    .waitSeconds(1)
+                    .lineToSplineHeading(new Pose2d(24, -12, Math.toRadians(90)))
+                    .waitSeconds(0.5)
+                    .addTemporalMarker(() -> { robot.lift(-0.01); })
+                    .waitSeconds(1)
+                    .addTemporalMarker(() -> {
+                        robot.claw.setPosition(1);
+                        robot.lift(0.05);
+                    })
+                    .waitSeconds(0.5)
+                    .build();
+            cycleEnd = cycle.end();
+        }
     }
 }

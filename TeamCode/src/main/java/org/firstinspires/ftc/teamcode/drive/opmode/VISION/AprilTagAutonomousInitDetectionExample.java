@@ -19,16 +19,13 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.officialAutos;
+package org.firstinspires.ftc.teamcode.officialAutos.VISION;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.officialAutos.VISION.AprilTagDetectionPipeline;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -36,8 +33,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="autovisionblue", group="Pushbot")
-public class visionautotestblue extends LinearOpMode
+@Autonomous(name="visiontest", group="Pushbot")
+public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -85,13 +82,6 @@ public class visionautotestblue extends LinearOpMode
 
             }
         });
-        RobotHardware robot = new RobotHardware(this);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d start = new Pose2d(-36.4, 61.6, 0);
-        drive.setPoseEstimate(start);
-
-
-
 
         telemetry.setMsTransmissionInterval(50);
 
@@ -178,43 +168,17 @@ public class visionautotestblue extends LinearOpMode
 
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT){
-            TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .strafeLeft(24)
-                    .forward(24)
-                    .build();
-
-
-            waitForStart();
-
-            if(isStopRequested()) return;
-            drive.followTrajectorySequence(blueTop);
-
 
         } else if (tagOfInterest.id == MIDDLE){
-            TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .forward(24)
-                    .build();
 
-            waitForStart();
-
-            if(isStopRequested()) return;
-            drive.followTrajectorySequence(blueTop);
 
         } else {
-            TrajectorySequence blueTop = drive.trajectorySequenceBuilder(start)
-                    .strafeRight(24)
-                    .forward(24)
-                    .build();
-
-            waitForStart();
-
-            if(isStopRequested()) return;
-            drive.followTrajectorySequence(blueTop);
 
         }
 
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
+        while (opModeIsActive()) {sleep(20);}
     }
 
     void tagToTelemetry(AprilTagDetection detection)
