@@ -197,7 +197,7 @@ public class CycleAutoBlue2 extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     robot.lift(0.1);
                 })
-                .waitSeconds(1.6)
+                .waitSeconds(1.525)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     robot.lift(0);
                 })
@@ -224,12 +224,12 @@ public class CycleAutoBlue2 extends LinearOpMode {
 
 
         TrajectorySequence leftTOI = drive.trajectorySequenceBuilder(preloadEnd)
-                .strafeLeft(13)
+                .strafeLeft(14)
                 .build();
 
         TrajectorySequence middleTOI = drive.trajectorySequenceBuilder(preloadEnd)
                 .back(0.25)
-                .strafeRight(13)
+                .strafeRight(14)
                 .build();
 
         TrajectorySequence rightTOI = drive.trajectorySequenceBuilder(preloadEnd)

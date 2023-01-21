@@ -61,26 +61,27 @@ public class teleop extends LinearOpMode {
             robot.RF.setPower(frontRightPower * speedControl);
             robot.RB.setPower(backRightPower * speedControl);
 
-            if (gamepad1.x) {
-                speedControl = 0.25;
-            }
-
-            if (gamepad1.y) {
+            if (gamepad1.left_trigger > 0.1) {
                 speedControl = 1.0;
             }
 
             if (gamepad1.left_bumper) {
+                speedControl = 0.25;
+            }
+
+            if (gamepad1.x) {
                 robot.claw.setPosition(0.1);
             }
 
-            if (gamepad1.left_trigger > 0.1) {
+            if (gamepad1.y) {
                 robot.claw.setPosition(1);
             }
 
             if (gamepad1.right_bumper) {
-                robot.lift(0.2);
-            } else if (gamepad1.right_trigger > 0.1) {
                 robot.lift(-0.2);
+
+            } else if (gamepad1.right_trigger > 0.1) {
+                robot.lift(0.2);
             } else {
                 robot.lift(0);
 
