@@ -142,7 +142,7 @@ public class RobotHardware{
         RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        claw.setPosition(0);
+        claw.setPosition(1);
         lift(0);
         setMotorPowers(0);
         //(double) 267 / 270, (double) 3 / 270

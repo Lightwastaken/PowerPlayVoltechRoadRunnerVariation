@@ -37,10 +37,10 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="Red terminal red substation", group="Pushbot")
-public class CycleAutoRed extends LinearOpMode {
-    public static Pose2d preloadEnd;
-    public static Pose2d cycleEnd;
+@Autonomous(name="Red terminal blue substation", group="Pushbot")
+public class CycleAutoRed2 extends LinearOpMode {
+    static Pose2d preloadEnd;
+    static Pose2d cycleEnd;
 
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -63,7 +63,6 @@ public class CycleAutoRed extends LinearOpMode {
     int LEFT = 1;
     int MIDDLE = 2;
     int RIGHT = 3;
-
 
     @Override
     public void runOpMode()
@@ -91,7 +90,7 @@ public class CycleAutoRed extends LinearOpMode {
             }
         });
 
-        Pose2d start = new Pose2d(-36, -60, Math.toRadians(90));
+        Pose2d start = new Pose2d(36, 60, -90);
         drive.setPoseEstimate(start);
 
         telemetry.setMsTransmissionInterval(50);
@@ -178,65 +177,43 @@ public class CycleAutoRed extends LinearOpMode {
         }
 
         TrajectorySequence preloadDeliver = drive.trajectorySequenceBuilder(start)
-                .addDisplacementMarker(23, () -> { robot.claw.setPosition(1); })
-                .forward(1.5)
-                .strafeRight(24)
-                .UNSTABLE_addDisplacementMarkerOffset(0, () -> { robot.lift(0.05); })
-                .lineToLinearHeading(new Pose2d(-11, -16, Math.toRadians(120)))
-                .forward(13)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
-                .waitSeconds(0.25)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(-0.01); })
-                .waitSeconds(0.5)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.claw.setPosition(0.1); })
-                .waitSeconds(0.75)
-                .back(5)
-                .lineToLinearHeading(new Pose2d(-24, -12, Math.toRadians(90)))
-
-                .lineToLinearHeading(new Pose2d(-60.5, -9, Math.toRadians(175)))
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.lift(0.1);
-                })
-                .waitSeconds(1.6)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.lift(0);
-                })
-                .forward(1.6)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                .addDisplacementMarker(23, () -> { robot.claw.setPosition(0); })
+                .strafeRight(25)
+                .addTemporalMarker(() -> { robot.lift(0.075); })
+                .lineToLinearHeading(new Pose2d(-11, -16, Math.toRadians(-33.5)))
+                .addTemporalMarker(() -> { robot.lift(0); })
+                .forward(10)
+                .addTemporalMarker(() -> { robot.lift(-0.01); })
+                .waitSeconds(1)
+                .addTemporalMarker(() -> {
                     robot.claw.setPosition(1);
+                    robot.lift(0.01);
                 })
-                .waitSeconds(1)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0.1); })
                 .waitSeconds(0.75)
-                .lineToLinearHeading(new Pose2d(-24, -5, Math.toRadians(90)))
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
-                .waitSeconds(0.5)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.claw.setPosition(0.1);
-                })
-                .waitSeconds(1)
+                .lineToLinearHeading(new Pose2d(11, 16, Math.toRadians(90)))
+                .strafeLeft(11)
                 .build();
 
         preloadEnd = preloadDeliver.end();
 
-
         TrajectorySequence leftTOI = drive.trajectorySequenceBuilder(preloadEnd)
-                .strafeLeft(13)
+                .strafeLeft(33)
                 .build();
 
         TrajectorySequence middleTOI = drive.trajectorySequenceBuilder(preloadEnd)
                 .back(0.25)
-                .strafeRight(13)
+                .strafeLeft(13)
                 .build();
 
         TrajectorySequence rightTOI = drive.trajectorySequenceBuilder(preloadEnd)
                 .back(0.25)
-                .strafeRight(38)
+                .strafeRight(13)
                 .build();
 
 
-        //TRAJECTORY FOLLOWED
+        /* Actually do something useful */
         drive.followTrajectorySequence(preloadDeliver);
+        cycles(0, drive, robot);
         if (tagOfInterest == null || tagOfInterest.id == LEFT) { //LEFT parking
             drive.followTrajectorySequence(leftTOI);
         } else if (tagOfInterest.id == MIDDLE) { //MIDDLE parking
@@ -244,8 +221,6 @@ public class CycleAutoRed extends LinearOpMode {
         } else { //RIGHT parking
             drive.followTrajectorySequence(rightTOI);
         }
-        robot.claw.setPosition(1);
-        robot.lift(-0.05);
 
 
 
@@ -270,7 +245,7 @@ public class CycleAutoRed extends LinearOpMode {
                         robot.claw.setPosition(1);
                         robot.lift(-0.01);
                     })
-                    .lineToSplineHeading(new Pose2d(57, -11.5, Math.toRadians(0)))
+                    .lineToSplineHeading(new Pose2d(-57, -11.5, Math.toRadians(180)))
                     .addDisplacementMarker(() -> {
                         robot.lift(0);
                     })
@@ -283,11 +258,9 @@ public class CycleAutoRed extends LinearOpMode {
                         robot.lift(0.1);
                     })
                     .waitSeconds(1)
-                    .lineToSplineHeading(new Pose2d(24, -12, Math.toRadians(90)))
+                    .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(90)))
                     .waitSeconds(0.5)
-                    .addTemporalMarker(() -> {
-                        robot.lift(-0.01);
-                    })
+                    .addTemporalMarker(() -> { robot.lift(-0.01); })
                     .waitSeconds(1)
                     .addTemporalMarker(() -> {
                         robot.claw.setPosition(1);

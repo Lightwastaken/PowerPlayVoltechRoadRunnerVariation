@@ -22,8 +22,9 @@
 package org.firstinspires.ftc.teamcode.officialAutos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -37,11 +38,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="Red terminal red substation", group="Pushbot")
-public class CycleAutoRed extends LinearOpMode {
-    public static Pose2d preloadEnd;
-    public static Pose2d cycleEnd;
-
+@Autonomous(name="red-autoparky", group="Pushbot")
+public class autoparky extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -64,17 +62,15 @@ public class CycleAutoRed extends LinearOpMode {
     int MIDDLE = 2;
     int RIGHT = 3;
 
+    AprilTagDetection tagOfInterest = null;
 
     @Override
     public void runOpMode()
     {
-        AprilTagDetection tagOfInterest = null;
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        RobotHardware robot = new RobotHardware(this);
-
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        RobotHardware robot = new RobotHardware(this);
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -91,7 +87,8 @@ public class CycleAutoRed extends LinearOpMode {
             }
         });
 
-        Pose2d start = new Pose2d(-36, -60, Math.toRadians(90));
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Pose2d start = new Pose2d(-36, -60, 0);
         drive.setPoseEstimate(start);
 
         telemetry.setMsTransmissionInterval(50);
@@ -177,66 +174,28 @@ public class CycleAutoRed extends LinearOpMode {
             telemetry.update();
         }
 
-        TrajectorySequence preloadDeliver = drive.trajectorySequenceBuilder(start)
-                .addDisplacementMarker(23, () -> { robot.claw.setPosition(1); })
-                .forward(1.5)
+
+        TrajectorySequence leftTOI = drive.trajectorySequenceBuilder(start)
                 .strafeRight(24)
-                .UNSTABLE_addDisplacementMarkerOffset(0, () -> { robot.lift(0.05); })
-                .lineToLinearHeading(new Pose2d(-11, -16, Math.toRadians(120)))
-                .forward(13)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
-                .waitSeconds(0.25)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(-0.01); })
-                .waitSeconds(0.5)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.claw.setPosition(0.1); })
-                .waitSeconds(0.75)
-                .back(5)
-                .lineToLinearHeading(new Pose2d(-24, -12, Math.toRadians(90)))
-
-                .lineToLinearHeading(new Pose2d(-60.5, -9, Math.toRadians(175)))
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.lift(0.1);
-                })
-                .waitSeconds(1.6)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.lift(0);
-                })
-                .forward(1.6)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.claw.setPosition(1);
-                })
-                .waitSeconds(1)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0.1); })
-                .waitSeconds(0.75)
-                .lineToLinearHeading(new Pose2d(-24, -5, Math.toRadians(90)))
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
-                .waitSeconds(0.5)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.claw.setPosition(0.1);
-                })
-                .waitSeconds(1)
+                .forward(49.5)
+                .strafeLeft(53.5)
                 .build();
 
-        preloadEnd = preloadDeliver.end();
-
-
-        TrajectorySequence leftTOI = drive.trajectorySequenceBuilder(preloadEnd)
-                .strafeLeft(13)
+        TrajectorySequence middleTOI = drive.trajectorySequenceBuilder(start)
+                .strafeRight(24)
+                .forward(50.5)
+                .strafeLeft(24)
                 .build();
 
-        TrajectorySequence middleTOI = drive.trajectorySequenceBuilder(preloadEnd)
-                .back(0.25)
-                .strafeRight(13)
-                .build();
-
-        TrajectorySequence rightTOI = drive.trajectorySequenceBuilder(preloadEnd)
-                .back(0.25)
-                .strafeRight(38)
+        TrajectorySequence rightTOI = drive.trajectorySequenceBuilder(start)
+                .strafeRight(24)
+                .forward(49.5)
                 .build();
 
 
-        //TRAJECTORY FOLLOWED
-        drive.followTrajectorySequence(preloadDeliver);
+        /* Actually do something useful */
+
+
         if (tagOfInterest == null || tagOfInterest.id == LEFT) { //LEFT parking
             drive.followTrajectorySequence(leftTOI);
         } else if (tagOfInterest.id == MIDDLE) { //MIDDLE parking
@@ -244,8 +203,6 @@ public class CycleAutoRed extends LinearOpMode {
         } else { //RIGHT parking
             drive.followTrajectorySequence(rightTOI);
         }
-        robot.claw.setPosition(1);
-        robot.lift(-0.05);
 
 
 
@@ -261,41 +218,5 @@ public class CycleAutoRed extends LinearOpMode {
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
-    }
-
-    public void cycles(int numCycles, SampleMecanumDrive drive, RobotHardware robot) {
-        for (int i = 0; i < numCycles; i++) {
-            TrajectorySequence cycle = drive.trajectorySequenceBuilder(preloadEnd)
-                    .UNSTABLE_addDisplacementMarkerOffset(12 - 2 * i, () -> {
-                        robot.claw.setPosition(1);
-                        robot.lift(-0.01);
-                    })
-                    .lineToSplineHeading(new Pose2d(57, -11.5, Math.toRadians(0)))
-                    .addDisplacementMarker(() -> {
-                        robot.lift(0);
-                    })
-                    .waitSeconds(0.25)
-                    .addTemporalMarker(() -> {
-                        robot.claw.setPosition(0);
-                    })
-                    .waitSeconds(0.3)
-                    .addTemporalMarker(() -> {
-                        robot.lift(0.1);
-                    })
-                    .waitSeconds(1)
-                    .lineToSplineHeading(new Pose2d(24, -12, Math.toRadians(90)))
-                    .waitSeconds(0.5)
-                    .addTemporalMarker(() -> {
-                        robot.lift(-0.01);
-                    })
-                    .waitSeconds(1)
-                    .addTemporalMarker(() -> {
-                        robot.claw.setPosition(1);
-                        robot.lift(0.05);
-                    })
-                    .waitSeconds(0.5)
-                    .build();
-            cycleEnd = cycle.end();
-        }
     }
 }
