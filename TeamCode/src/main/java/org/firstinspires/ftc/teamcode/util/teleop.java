@@ -3,7 +3,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.officialAutos.RobotHardware;
 
-@TeleOp(name="teleoptoggles", group="Pushbot")
+@TeleOp(name="teleopgilbert", group="Pushbot")
 public class teleop extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -70,11 +70,11 @@ public class teleop extends LinearOpMode {
             }
 
             if (gamepad1.left_bumper) {
-                robot.claw.setPosition(1);
+                robot.claw.setPosition(0.1);
             }
 
             if (gamepad1.left_trigger > 0.1) {
-                robot.claw.setPosition(0);
+                robot.claw.setPosition(1);
             }
 
             if (gamepad1.right_bumper) {
