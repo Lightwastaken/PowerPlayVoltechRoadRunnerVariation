@@ -208,7 +208,7 @@ public class CycleAutoBlue extends LinearOpMode {
                 .waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0.1); })
                 .waitSeconds(0.75)
-                .lineToLinearHeading(new Pose2d(-24, 8, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(-24, 6, Math.toRadians(-90)))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
                 .waitSeconds(0.5)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {

@@ -38,7 +38,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="red-autoparky", group="Pushbot")
+@Autonomous(name="red terminal parking only", group="Pushbot")
 public class autoparky extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;

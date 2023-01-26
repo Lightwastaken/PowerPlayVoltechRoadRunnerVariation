@@ -197,7 +197,7 @@ public class CycleAutoBlue2 extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     robot.lift(0.1);
                 })
-                .waitSeconds(1.525)
+                .waitSeconds(1.5325)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     robot.lift(0);
                 })

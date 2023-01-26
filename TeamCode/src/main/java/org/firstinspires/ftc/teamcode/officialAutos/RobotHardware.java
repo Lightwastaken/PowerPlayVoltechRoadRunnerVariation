@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -72,13 +73,14 @@ public class RobotHardware{
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
 
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
-    public DcMotor LF   = null; //left front(chassis)
-    public DcMotor LB   = null; //left back(chassis)
-    public DcMotor RF  = null; //right front(chassis)
-    public DcMotor RB  = null; //right back(chassis)
+    public DcMotorEx LF   = null; //left front(chassis)
+    public DcMotorEx LB   = null; //left back(chassis)
+    public DcMotorEx RF  = null; //right front(chassis)
+    public DcMotorEx RB  = null; //right back(chassis)
     public DcMotor RTL = null; //right motor(lift)
     public DcMotor LTL = null; //left motor(lift)
     public Servo claw = null; //claw
+    public DistanceSensor sensor = null;
 
     SensorIMU imuu = new SensorIMU();
     public ElapsedTime runtime = new ElapsedTime();
@@ -110,13 +112,14 @@ public class RobotHardware{
      */
     public void initHW()    {
         //INITIALIZE ALL HARDWARE
-        LF  = myOpMode.hardwareMap.get(DcMotor.class, "LF");
-        LB = myOpMode.hardwareMap.get(DcMotor.class, "LB");
-        RF  = myOpMode.hardwareMap.get(DcMotor.class, "RF");
-        RB = myOpMode.hardwareMap.get(DcMotor.class, "RB");
+        LF  = myOpMode.hardwareMap.get(DcMotorEx.class, "LF");
+        LB = myOpMode.hardwareMap.get(DcMotorEx.class, "LB");
+        RF  = myOpMode.hardwareMap.get(DcMotorEx.class, "RF");
+        RB = myOpMode.hardwareMap.get(DcMotorEx.class, "RB");
         RTL = myOpMode.hardwareMap.get(DcMotorEx.class, "RTL");
         LTL = myOpMode.hardwareMap.get(DcMotorEx.class, "LTL");
         claw = myOpMode.hardwareMap.get(Servo.class, "CLAW");
+        sensor = myOpMode.hardwareMap.get(DistanceSensor.class, "distance sensor");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -408,6 +411,14 @@ public class RobotHardware{
     }
     public void encoderDrive(double speed, double allMotors) {
         encoderDrive(speed, allMotors, allMotors, allMotors, allMotors);
+    }
+
+    public boolean isChassisVeloZero() {
+        if (LF.getVelocity() == 0 && LB.getVelocity() == 0 && RF.getVelocity() == 0 && RB.getVelocity() == 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 
