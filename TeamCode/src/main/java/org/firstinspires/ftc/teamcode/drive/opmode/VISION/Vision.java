@@ -1,24 +1,39 @@
 package org.firstinspires.ftc.teamcode.drive.opmode.VISION;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Mat;
 import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.firstinspires.ftc.teamcode.officialAutos.VISION.AprilTagDetectionPipeline;
 
 import java.util.ArrayList;
 
 public class Vision extends OpenCvPipeline{
-    //Variable declarations
-    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    // Lens intrinsics
+    // UNITS ARE PIXELS
+    double fx = 822.317;
+    double fy = 822.317;
+    double cx = 319.495;
+    double cy =  242.502;
+
+    // UNITS ARE METERS
+    double tagsize = 0.166;
+
+    // Tag ID 18 from the 36h11 family
+    int LEFT = 1;
+    int MIDDLE = 2;
+    int RIGHT = 3;
+
     AprilTagDetection tagOfInterest;
     Telemetry telemetry;
     String robotParksAt;
 
-    //AprilTag IDs. 36h11 family
-    int LEFT = 1;
-    int MIDDLE = 2;
-    int RIGHT = 3;
+    AprilTagDetectionPipeline aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+    ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
     public Vision(Telemetry t) {
         telemetry = t;
@@ -26,37 +41,27 @@ public class Vision extends OpenCvPipeline{
 
     @Override
     public Mat processFrame(Mat input) {
-        if (tagOfInterest.id == 3) { //RANDOMIZATION = 3, 6
-            robotParksAt = "RIGHT";
-        } else if (tagOfInterest.id == 2) { //RANDOMIZATION = 2, 5
-            robotParksAt = "MIDDLE";
-        } else { //RANDOMIZATION = 1, 4
-            robotParksAt = "LEFT";
-        }
-
-        ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-
-        if (currentDetections.size() != 0) {
-            boolean tagFound = false;
+        try {
             for (AprilTagDetection tag : currentDetections) {
-                if (tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
-                    tagOfInterest = tag;
-                    tagFound = true;
+                tagOfInterest = tag;
+                tagOfInterest.id = tag.id;
+            }
+            switch (tagOfInterest.id) {
+                case 2: //RANDOMIZATION = 2, 5
+                    robotParksAt = "MIDDLE";
                     break;
-                }
+                case 3: //RANDOMIZATION = 3, 6
+                    robotParksAt = "RIGHT";
+                    break;
+                default:
+                    robotParksAt = "LEFT";
             }
 
-            if (tagFound) {
-                telemetry.addData("Tag ID: ", tagOfInterest.id);
-                telemetry.addData("Robot parking location: ", robotParksAt);
-            } else {
-                telemetry.addLine("Tag not found");
-            }
-
-        } else {
-            telemetry.addLine("--- Tag not found, but last seen at: ---");
-            telemetry.addData("Detected tag ID: ", tagOfInterest.id);
+            telemetry.addData("Tag ID: ", tagOfInterest.id);
             telemetry.addData("Robot parking location: ", robotParksAt);
+
+        } catch (Exception e) {
+            telemetry.addLine("Tag not found");
         }
 
         telemetry.update();
@@ -67,5 +72,4 @@ public class Vision extends OpenCvPipeline{
     public int getID() {
         return tagOfInterest.id;
     }
-
 }

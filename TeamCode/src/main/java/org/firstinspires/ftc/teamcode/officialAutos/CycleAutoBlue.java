@@ -182,7 +182,7 @@ public class CycleAutoBlue extends LinearOpMode {
                 .forward(1.5)
                 .strafeLeft(24)
                 .UNSTABLE_addDisplacementMarkerOffset(0, () -> { robot.lift(0.05); })
-                .lineToLinearHeading(new Pose2d(-11, 16, Math.toRadians(-123)))
+                .lineToLinearHeading(new Pose2d(-11, 16, Math.toRadians(-123.5)))
                 .forward(13)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
                 .waitSeconds(0.25)
@@ -193,7 +193,7 @@ public class CycleAutoBlue extends LinearOpMode {
                 .back(5)
                 .lineToLinearHeading(new Pose2d(-24, 12, Math.toRadians(-90)))
 
-                .lineToLinearHeading(new Pose2d(-60.55, 8, Math.toRadians(-175)))
+                .lineToLinearHeading(new Pose2d(-60.4, 9, Math.toRadians(-175)))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     robot.lift(0.1);
                 })
@@ -208,7 +208,7 @@ public class CycleAutoBlue extends LinearOpMode {
                 .waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0.1); })
                 .waitSeconds(0.75)
-                .lineToLinearHeading(new Pose2d(-24, 5, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(-24, 6, Math.toRadians(-90)))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
                 .waitSeconds(0.5)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
