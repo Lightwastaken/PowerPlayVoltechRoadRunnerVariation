@@ -14,11 +14,13 @@ public class teleop extends LinearOpMode {
     public void runOpMode() {
 
         //checking teleop distance if encoders convert to inches correctly
-        final double COUNTS_PER_MOTOR_REV = 537.7;    // eg: TETRIX Motor Encoder
+        final double COUNTS_PER_MOTOR_REV = 5281.1;    // eg: TETRIX Motor Encoder
         final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
         final double WHEEL_DIAMETER_INCHES = 96.0 / 25.4;     // For figuring circumference
         final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                 (WHEEL_DIAMETER_INCHES * 3.1415);
+        boolean maskMoveUp = false;
+        boolean maskMoveDown = false;
 
         double left;
         double right;
@@ -77,13 +79,17 @@ public class teleop extends LinearOpMode {
                 robot.claw.setPosition(1);
             }
 
-            if (gamepad1.right_bumper) {
-                robot.lift(-0.2);
+            if (gamepad2.right_bumper && !maskMoveUp) {
+                maskMoveUp = true;
+                robot.moveUp();
+            } else if (!gamepad2.right_bumper)
+                maskMoveUp = false;
 
-            } else if (gamepad1.right_trigger > 0.1) {
-                robot.lift(0.2);
-            } else {
-                robot.lift(0);
+            if (gamepad2.right_trigger > 0.1 && !maskMoveDown) {
+                maskMoveDown = true;
+                robot.moveDown();
+            } else if (gamepad2.right_trigger > 0.1)
+                maskMoveDown = false;
 
 //                telemetry.addData("LF Encoder", robot.LF.getCurrentPosition());
 //                telemetry.addData("LB Encoder", robot.LB.getCurrentPosition());
@@ -101,7 +107,6 @@ public class teleop extends LinearOpMode {
 
         }
 
-    }
     public void clawPosition (double position) {
         robot.claw.setPosition(position);
     }

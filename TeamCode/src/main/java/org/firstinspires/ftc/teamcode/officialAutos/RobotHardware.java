@@ -77,8 +77,8 @@ public class RobotHardware{
     public DcMotorEx LB   = null; //left back(chassis)
     public DcMotorEx RF  = null; //right front(chassis)
     public DcMotorEx RB  = null; //right back(chassis)
-    public DcMotor RTL = null; //right motor(lift)
-    public DcMotor LTL = null; //left motor(lift)
+    public DcMotorEx RTL = null; //right motor(lift)
+    public DcMotorEx LTL = null; //left motor(lift)
     public Servo claw = null; //claw
     public DistanceSensor sensor = null;
 
@@ -86,11 +86,11 @@ public class RobotHardware{
     public ElapsedTime runtime = new ElapsedTime();
     public Orientation lastAngles = new Orientation();
     public double currAngle = 0.0;
-    public static final int BOTTOM_OUTTAKE_POSITION = 65;
+    public static final int BOTTOM_OUTTAKE_POSITION = 0;
     public static final int MID_OUTTAKE_POSITION = 100;
-    public static final int TOP_OUTTAKE_POSITION = 600;
-    public static final double OUTTAKE_SPEED = 0.3 * 117 * 1425.1 / 60;
-    static final double COUNTS_PER_MOTOR_REV = 537.7;    // eg: TETRIX Motor Encoder
+    public static final int TOP_OUTTAKE_POSITION = 200;
+    public static final double OUTTAKE_SPEED = 1 * 117 * 1425.1 / 60;
+    static final double COUNTS_PER_MOTOR_REV = 5281.1;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 96/25.4;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
@@ -146,7 +146,6 @@ public class RobotHardware{
         RTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         claw.setPosition(1);
-        lift(0);
         setMotorPowers(0);
         //(double) 267 / 270, (double) 3 / 270
 
@@ -402,10 +401,6 @@ public class RobotHardware{
 
 
     }
-    public  void lift(double power){
-        RTL.setPower(power);
-        LTL.setPower(power);
-    }
 
     public void encoderDrive(double driveSpeed, int i, int i1) {
     }
@@ -419,6 +414,37 @@ public class RobotHardware{
         } else {
             return false;
         }
+    }
+    public  void lift(double power){
+        RTL.setPower(power);
+        LTL.setPower(power);
+    }
+
+    public void moveUp() {
+        int targetPosition = 0;
+        if (RTL.getCurrentPosition() < MID_OUTTAKE_POSITION && LTL.getCurrentPosition() < MID_OUTTAKE_POSITION)
+            targetPosition = MID_OUTTAKE_POSITION;
+        else if (RTL.getCurrentPosition() < TOP_OUTTAKE_POSITION && LTL.getCurrentPosition() < TOP_OUTTAKE_POSITION)
+            targetPosition = TOP_OUTTAKE_POSITION;
+        RTL.setTargetPosition(targetPosition);
+        LTL.setTargetPosition(targetPosition);
+        RTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RTL.setVelocity(OUTTAKE_SPEED);
+        LTL.setVelocity(OUTTAKE_SPEED);
+
+    }
+
+    public void moveDown() {
+        int targetPosition = 0;
+        if (RTL.getCurrentPosition() >= MID_OUTTAKE_POSITION && LTL.getCurrentPosition() >= MID_OUTTAKE_POSITION)
+            targetPosition = BOTTOM_OUTTAKE_POSITION;
+        RTL.setTargetPosition(targetPosition);
+        LTL.setTargetPosition(targetPosition);
+        RTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RTL.setVelocity(OUTTAKE_SPEED);
+        LTL.setVelocity(OUTTAKE_SPEED);
     }
 }
 
