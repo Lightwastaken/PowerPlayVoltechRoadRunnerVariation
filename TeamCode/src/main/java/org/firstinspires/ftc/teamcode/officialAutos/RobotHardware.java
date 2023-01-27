@@ -415,7 +415,7 @@ public class RobotHardware{
             return false;
         }
     }
-    public  void lift(double power){
+    public void lift(double power){
         RTL.setPower(power);
         LTL.setPower(power);
     }

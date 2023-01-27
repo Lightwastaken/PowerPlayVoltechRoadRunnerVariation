@@ -42,19 +42,21 @@ public class CyclesRTRS extends LinearOpMode{
     public static Pose2d cycleEnd;
     public DistanceSensor sensor;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
-    public enum robotState { //FSM state initialization
+    public enum states {
         PRELOAD,
+        CYCLES_1,
         CYCLES,
         PARKING,
-        IDLE
+        IDLE;
     }
-    robotState currentState = robotState.IDLE;
+    states currentState = states.IDLE;
 
     @Override
     public void runOpMode() {
         //ROBOT declarations
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         RobotHardware robot = new RobotHardware(this);
+        Thread distanceSensorGetDistance = new Thread(new CyclesRTRS().new distanceSensor());
 
         //VISION initialization
         Vision cam = new Vision(telemetry);
@@ -108,33 +110,23 @@ public class CyclesRTRS extends LinearOpMode{
                 .build();
 
         //TRAJECTORY FOLLOWED
-        currentState = robotState.PRELOAD;
-        switch (currentState) {
-            case PRELOAD:
-                drive.followTrajectorySequenceAsync(preloadDeliver);
-                currentState = robotState.CYCLES;
-                break;
-            case CYCLES:
-                cycles(0, drive, robot);
-                currentState = robotState.PARKING;
-                break;
-            case PARKING:
-                if (cam.getID() == 2) { //MIDDLE parking: ID #2
-                    drive.followTrajectorySequenceAsync(middleTOI);
-                } else if (cam.getID() == 3) { //MIDDLE parking: ID #3
-                    drive.followTrajectorySequenceAsync(rightTOI);
-                } else { //LEFT parking; ID #1
-                    drive.followTrajectorySequenceAsync(leftTOI);
-                }
-                currentState = robotState.IDLE;
-                break;
-            case IDLE:
-                break;
+        currentState = states.PRELOAD;
+        drive.followTrajectorySequenceAsync(preloadDeliver);
+        cycles(0, drive, robot);
+        currentState = states.PARKING;
+        if (cam.getID() == 2) { //MIDDLE parking: ID #2
+            drive.followTrajectorySequenceAsync(middleTOI);
+        } else if (cam.getID() == 3) { //MIDDLE parking: ID #3
+            drive.followTrajectorySequenceAsync(rightTOI);
+        } else { //LEFT parking; ID #1
+            drive.followTrajectorySequenceAsync(leftTOI);
         }
 
-        while (robot.isChassisVeloZero() && currentState == robotState.CYCLES) {
-            getDistance();
+        while (robot.isChassisVeloZero() && currentState == states.CYCLES_1) {
+            distanceSensorGetDistance.run();
         }
+
+
 
 
     }
@@ -146,7 +138,7 @@ public class CyclesRTRS extends LinearOpMode{
                     robot.liftEncoderDrive(-0.01, 32, 32);
                 })
                 .forward(3)
-                .lineToLinearHeading(new Pose2d(-56.5, -11.75, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-56.5, 11.75, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     while (getDistance() < 5) {
                         robot.lift(0.05);
@@ -170,6 +162,11 @@ public class CyclesRTRS extends LinearOpMode{
         for (int i = 0; i < numCycles; i++) {
             if (time.time() < 24) {
                 drive.followTrajectorySequenceAsync(cycle);
+                if (i == 0) {
+                    currentState = states.CYCLES_1;
+                } else {
+                    currentState =  states.CYCLES;
+                }
             } else {
                 i = numCycles + 1;
             }
@@ -180,5 +177,11 @@ public class CyclesRTRS extends LinearOpMode{
     public double getDistance() {
         double distance = sensor.getDistance(DistanceUnit.CM);
         return distance;
+    }
+
+    private class distanceSensor implements Runnable {
+        public void run() {
+            getDistance();
+        }
     }
 }
