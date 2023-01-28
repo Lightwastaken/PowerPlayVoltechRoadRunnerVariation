@@ -36,7 +36,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="Blue terminal red substation", group="Pushbot")
+@Autonomous(name="Blue terminal red substation 1", group="Pushbot")
 public class CyclesBTRS extends LinearOpMode{
     public static Pose2d preloadEnd;
     public static Pose2d cycleEnd;
@@ -56,7 +56,7 @@ public class CyclesBTRS extends LinearOpMode{
         //ROBOT declarations
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         RobotHardware robot = new RobotHardware(this);
-        Thread distanceSensorGetDistance = new Thread(new CyclesBTRS().new distanceSensor());
+        //Thread distanceSensorGetDistance = new Thread(new CyclesBTRS().new distanceSensor());
 
         //VISION initialization
         Vision cam = new Vision(telemetry);
@@ -122,10 +122,11 @@ public class CyclesBTRS extends LinearOpMode{
             drive.followTrajectorySequenceAsync(leftTOI);
         }
 
+        /*
         while (robot.isChassisVeloZero() && currentState == states.CYCLES_1) {
             distanceSensorGetDistance.run();
         }
-
+*/
 
 
 
@@ -139,12 +140,14 @@ public class CyclesBTRS extends LinearOpMode{
                 })
                 .forward(3)
                 .lineToLinearHeading(new Pose2d(-56.5, 11.75, Math.toRadians(0)))
+                /*
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     while (getDistance() < 5) {
                         robot.lift(0.05);
                     }
                     robot.lift(0);
                 })
+                */
                 .waitSeconds(1.7)
                 .forward(3)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
@@ -173,7 +176,7 @@ public class CyclesBTRS extends LinearOpMode{
         }
         cycleEnd = cycle.end();
     }
-
+/*
     public double getDistance() {
         double distance = sensor.getDistance(DistanceUnit.CM);
         return distance;
@@ -184,4 +187,5 @@ public class CyclesBTRS extends LinearOpMode{
             getDistance();
         }
     }
+*/
 }

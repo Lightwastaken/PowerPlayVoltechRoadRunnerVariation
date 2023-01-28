@@ -36,7 +36,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="Red terminal blue substation", group="Pushbot")
+@Autonomous(name="Red terminal blue substation 1", group="Pushbot")
 public class CyclesRTBS extends LinearOpMode{
     public static Pose2d preloadEnd;
     public static Pose2d cycleEnd;
@@ -56,7 +56,7 @@ public class CyclesRTBS extends LinearOpMode{
         //ROBOT declarations
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         RobotHardware robot = new RobotHardware(this);
-        Thread distanceSensorGetDistance = new Thread(new CyclesRTBS().new distanceSensor());
+        //Thread distanceSensorGetDistance = new Thread(new CyclesRTBS().new distanceSensor());
 
         //VISION initialization
         Vision cam = new Vision(telemetry);
@@ -122,10 +122,11 @@ public class CyclesRTBS extends LinearOpMode{
             drive.followTrajectorySequenceAsync(leftTOI);
         }
 
+        /*
         while (robot.isChassisVeloZero() && currentState == states.CYCLES_1) {
             distanceSensorGetDistance.run();
         }
-
+*/
 
 
 
@@ -139,12 +140,14 @@ public class CyclesRTBS extends LinearOpMode{
                 })
                 .forward(3)
                 .lineToLinearHeading(new Pose2d(-56.5, 11.75, Math.toRadians(0)))
+                /*
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     while (getDistance() < 5) {
                         robot.lift(0.05);
                     }
                     robot.lift(0);
                 })
+                */
                 .waitSeconds(1.7)
                 .forward(3)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
@@ -174,6 +177,7 @@ public class CyclesRTBS extends LinearOpMode{
         cycleEnd = cycle.end();
     }
 
+    /*
     public double getDistance() {
         double distance = sensor.getDistance(DistanceUnit.CM);
         return distance;
@@ -184,4 +188,5 @@ public class CyclesRTBS extends LinearOpMode{
             getDistance();
         }
     }
+     */
 }

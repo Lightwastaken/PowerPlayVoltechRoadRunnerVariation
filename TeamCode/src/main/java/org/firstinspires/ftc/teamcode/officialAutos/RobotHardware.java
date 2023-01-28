@@ -80,23 +80,24 @@ public class RobotHardware{
     public DcMotorEx RTL = null; //right motor(lift)
     public DcMotorEx LTL = null; //left motor(lift)
     public Servo claw = null; //claw
-    public DistanceSensor sensor = null;
+    //public DistanceSensor sensor = null;
 
     SensorIMU imuu = new SensorIMU();
     public ElapsedTime runtime = new ElapsedTime();
     public Orientation lastAngles = new Orientation();
     public double currAngle = 0.0;
-    public static final int BOTTOM_OUTTAKE_POSITION = 0;
-    public static final int MID_OUTTAKE_POSITION = 100;
-    public static final int TOP_OUTTAKE_POSITION = 200;
-    public static final double OUTTAKE_SPEED = 1 * 117 * 1425.1 / 60;
+    public static final int ZERO = 0;
+    public static final int GROUND = 10;
+    public static final int LOW_JUNC = 100;
+    public static final int MED_JUNC = 200;
+    public static final int HIGH_JUNC = 300;
+    public static final double OUTTAKE_SPEED = 0.1;
     static final double COUNTS_PER_MOTOR_REV = 5281.1;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 96/25.4;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.7;
-
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public RobotHardware(LinearOpMode opmode) {
@@ -119,7 +120,7 @@ public class RobotHardware{
         RTL = myOpMode.hardwareMap.get(DcMotorEx.class, "RTL");
         LTL = myOpMode.hardwareMap.get(DcMotorEx.class, "LTL");
         claw = myOpMode.hardwareMap.get(Servo.class, "CLAW");
-        sensor = myOpMode.hardwareMap.get(DistanceSensor.class, "distance sensor");
+        //sensor = myOpMode.hardwareMap.get(DistanceSensor.class, "distance sensor");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -147,7 +148,6 @@ public class RobotHardware{
         LTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         claw.setPosition(1);
         setMotorPowers(0);
-        //(double) 267 / 270, (double) 3 / 270
 
 
 
@@ -164,8 +164,6 @@ public class RobotHardware{
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
 
         // Send telemetry message to signify robot waiting;
     }
@@ -365,8 +363,8 @@ public class RobotHardware{
         if (linearOpMode.opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            heightTarget = LTL.getCurrentPosition() + (int) (rightlift * COUNTS_PER_INCH);
-            heightTarget2 = RTL.getCurrentPosition() + (int) (leftLift * COUNTS_PER_INCH);
+            heightTarget = LTL.getCurrentPosition() + (int) (rightlift);
+            heightTarget2 = RTL.getCurrentPosition() + (int) (leftLift);
             telemetry.addData("old target", LB.getCurrentPosition());
             LTL.setTargetPosition(heightTarget);
             RTL.setTargetPosition(heightTarget2);
@@ -415,36 +413,27 @@ public class RobotHardware{
             return false;
         }
     }
-    public void lift(double power){
+    public void lift(double power) {
         RTL.setPower(power);
         LTL.setPower(power);
     }
 
     public void moveUp() {
-        int targetPosition = 0;
-        if (RTL.getCurrentPosition() < MID_OUTTAKE_POSITION && LTL.getCurrentPosition() < MID_OUTTAKE_POSITION)
-            targetPosition = MID_OUTTAKE_POSITION;
-        else if (RTL.getCurrentPosition() < TOP_OUTTAKE_POSITION && LTL.getCurrentPosition() < TOP_OUTTAKE_POSITION)
-            targetPosition = TOP_OUTTAKE_POSITION;
-        RTL.setTargetPosition(targetPosition);
-        LTL.setTargetPosition(targetPosition);
-        RTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        LTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        RTL.setVelocity(OUTTAKE_SPEED);
-        LTL.setVelocity(OUTTAKE_SPEED);
-
+        int targetPosition;
+        if (RTL.getCurrentPosition() < MED_JUNC - 5 && LTL.getCurrentPosition() < MED_JUNC - 5) {
+            targetPosition = MED_JUNC;
+        } else if (RTL.getCurrentPosition() < HIGH_JUNC && LTL.getCurrentPosition() < HIGH_JUNC) {
+            targetPosition = HIGH_JUNC;
+        } else {
+            targetPosition = LOW_JUNC;
+        }
+        liftEncoderDrive(OUTTAKE_SPEED, targetPosition, targetPosition);
+        telemetry.addData("target pos: ", targetPosition);
     }
 
     public void moveDown() {
-        int targetPosition = 0;
-        if (RTL.getCurrentPosition() >= MID_OUTTAKE_POSITION && LTL.getCurrentPosition() >= MID_OUTTAKE_POSITION)
-            targetPosition = BOTTOM_OUTTAKE_POSITION;
-        RTL.setTargetPosition(targetPosition);
-        LTL.setTargetPosition(targetPosition);
-        RTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        LTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        RTL.setVelocity(OUTTAKE_SPEED);
-        LTL.setVelocity(OUTTAKE_SPEED);
+        liftEncoderDrive(-OUTTAKE_SPEED, 0, 0);
+        telemetry.addData("target pos: ", "0");
     }
 }
 

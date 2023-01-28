@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.util;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.officialAutos.RobotHardware;
 
 @TeleOp(name="teleopgilbert", group="Pushbot")
@@ -79,29 +81,29 @@ public class teleop extends LinearOpMode {
                 robot.claw.setPosition(1);
             }
 
-            if (gamepad2.right_bumper && !maskMoveUp) {
-                maskMoveUp = true;
+            if (gamepad1.right_bumper) {
                 robot.moveUp();
-            } else if (!gamepad2.right_bumper)
-                maskMoveUp = false;
+            }
 
-            if (gamepad2.right_trigger > 0.1 && !maskMoveDown) {
-                maskMoveDown = true;
+            if (gamepad1.left_bumper) {
                 robot.moveDown();
-            } else if (gamepad2.right_trigger > 0.1)
-                maskMoveDown = false;
+            }
 
-//                telemetry.addData("LF Encoder", robot.LF.getCurrentPosition());
-//                telemetry.addData("LB Encoder", robot.LB.getCurrentPosition());
-//                telemetry.addData("RF Encoder", robot.RF.getCurrentPosition());
-//                telemetry.addData("RB Encoder", robot.RB.getCurrentPosition());
-//                telemetry.addData("LF Inches", robot.LF.getCurrentPosition() / COUNTS_PER_INCH);
-//                telemetry.addData("LB Inches", robot.LB.getCurrentPosition() / COUNTS_PER_INCH);
-//                telemetry.addData("RF Inches", robot.RF.getCurrentPosition() / COUNTS_PER_INCH);
-//                telemetry.addData("RB Inches", robot.RB.getCurrentPosition() / COUNTS_PER_INCH);
-//                telemetry.update();
-//
-//                // Pace this loop so jaw action is reasonable speed.
+               telemetry.addData("LF Encoder", robot.LF.getCurrentPosition());
+               telemetry.addData("LB Encoder", robot.LB.getCurrentPosition());
+               telemetry.addData("RF Encoder", robot.RF.getCurrentPosition());
+               telemetry.addData("RB Encoder", robot.RB.getCurrentPosition());
+               telemetry.addData("LF Inches", robot.LF.getCurrentPosition() / COUNTS_PER_INCH);
+               telemetry.addData("LTL ticks", robot.LTL.getCurrentPosition());
+               telemetry.addData("LTL current", robot.LTL.getCurrent(CurrentUnit.AMPS));
+               telemetry.addData("RTL ticks", robot.RTL.getCurrentPosition());
+               telemetry.addData("RTL current", robot.RTL.getCurrent(CurrentUnit.AMPS));
+               telemetry.addData("LB Inches", robot.LB.getCurrentPosition() / COUNTS_PER_INCH);
+               telemetry.addData("RF Inches", robot.RF.getCurrentPosition() / COUNTS_PER_INCH);
+               telemetry.addData("RB Inches", robot.RB.getCurrentPosition() / COUNTS_PER_INCH);
+               telemetry.update();
+
+               // Pace this loop so jaw action is reasonable speed.
                 sleep(50);
             }
 

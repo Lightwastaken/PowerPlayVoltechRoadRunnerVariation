@@ -36,7 +36,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="Blue terminal blue substation", group="Pushbot")
+@Autonomous(name="Blue terminal blue substation 1", group="Pushbot")
 public class CyclesBTBS extends LinearOpMode{
     public static Pose2d preloadEnd;
     public static Pose2d cycleEnd;
@@ -69,7 +69,6 @@ public class CyclesBTBS extends LinearOpMode{
 
             public void onError(int errorCode) {}
         });
-
 
         //ROBOT + trajectory initializations
         Pose2d start = new Pose2d(-36, 60, Math.toRadians(-90));
@@ -128,7 +127,6 @@ public class CyclesBTBS extends LinearOpMode{
 
 
 
-
     }
 
     public void cycles(int numCycles, SampleMecanumDrive drive, RobotHardware robot) {
@@ -141,15 +139,14 @@ public class CyclesBTBS extends LinearOpMode{
                 .lineToLinearHeading(new Pose2d(-56.5, 11.75, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     while (getDistance() < 5) {
-                        robot.lift(0.05);
+                        robot.lift(0.1);
                     }
                     robot.lift(0);
                 })
-                .waitSeconds(1.7)
-                .forward(3)
+                .waitSeconds(0.8)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     robot.claw.setPosition(1);
-                    robot.liftEncoderDrive(0.05, 35, 35);
+                    robot.liftEncoderDrive(0.05, 200, 200);
                 })
                 .waitSeconds(0.75)
                 .lineToLinearHeading(preloadEnd)
@@ -171,6 +168,7 @@ public class CyclesBTBS extends LinearOpMode{
                 i = numCycles + 1;
             }
         }
+
         cycleEnd = cycle.end();
     }
 

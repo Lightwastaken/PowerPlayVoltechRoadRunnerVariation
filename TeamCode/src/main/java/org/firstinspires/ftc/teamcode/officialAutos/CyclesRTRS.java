@@ -36,7 +36,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="Red terminal red substation", group="Pushbot")
+@Autonomous(name="Red terminal red substation 1", group="Pushbot")
 public class CyclesRTRS extends LinearOpMode{
     public static Pose2d preloadEnd;
     public static Pose2d cycleEnd;
@@ -56,7 +56,7 @@ public class CyclesRTRS extends LinearOpMode{
         //ROBOT declarations
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         RobotHardware robot = new RobotHardware(this);
-        Thread distanceSensorGetDistance = new Thread(new CyclesRTRS().new distanceSensor());
+        //Thread distanceSensorGetDistance = new Thread(new CyclesRTRS().new distanceSensor());
 
         //VISION initialization
         Vision cam = new Vision(telemetry);
@@ -121,11 +121,11 @@ public class CyclesRTRS extends LinearOpMode{
         } else { //LEFT parking; ID #1
             drive.followTrajectorySequenceAsync(leftTOI);
         }
-
+/*
         while (robot.isChassisVeloZero() && currentState == states.CYCLES_1) {
             distanceSensorGetDistance.run();
         }
-
+*/
 
 
 
@@ -139,12 +139,14 @@ public class CyclesRTRS extends LinearOpMode{
                 })
                 .forward(3)
                 .lineToLinearHeading(new Pose2d(-56.5, 11.75, Math.toRadians(0)))
+                /*
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     while (getDistance() < 5) {
                         robot.lift(0.05);
                     }
                     robot.lift(0);
                 })
+                 */
                 .waitSeconds(1.7)
                 .forward(3)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
@@ -174,6 +176,7 @@ public class CyclesRTRS extends LinearOpMode{
         cycleEnd = cycle.end();
     }
 
+    /*
     public double getDistance() {
         double distance = sensor.getDistance(DistanceUnit.CM);
         return distance;
@@ -184,4 +187,5 @@ public class CyclesRTRS extends LinearOpMode{
             getDistance();
         }
     }
+     */
 }
