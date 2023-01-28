@@ -6,8 +6,7 @@ import org.firstinspires.ftc.teamcode.officialAutos.RobotHardware;
 @TeleOp(name="teleopgilbert", group="Pushbot")
 public class teleop extends LinearOpMode {
 
-    /* Declare OpMode members. */
-    ;   // Use a Pushbot's hardware
+    /* Declare OpMode members. */;   // Use a Pushbot's hardware
     RobotHardware robot = new RobotHardware(this);
 
     @Override
@@ -79,27 +78,27 @@ public class teleop extends LinearOpMode {
                 robot.claw.setPosition(1);
             }
 
-            if (gamepad2.right_bumper && !maskMoveUp) {
-                maskMoveUp = true;
-                robot.moveUp();
-            } else if (!gamepad2.right_bumper)
-                maskMoveUp = false;
+            if (gamepad1.right_bumper) {
+                robot.lift(-0.2);
 
-            if (gamepad2.right_trigger > 0.1 && !maskMoveDown) {
-                maskMoveDown = true;
-                robot.moveDown();
-            } else if (gamepad2.right_trigger > 0.1)
-                maskMoveDown = false;
+            } else if (gamepad1.right_trigger > 0.1) {
+                robot.lift(0.2);
+            } else {
+                robot.lift(0);
 
-//                telemetry.addData("LF Encoder", robot.LF.getCurrentPosition());
-//                telemetry.addData("LB Encoder", robot.LB.getCurrentPosition());
-//                telemetry.addData("RF Encoder", robot.RF.getCurrentPosition());
-//                telemetry.addData("RB Encoder", robot.RB.getCurrentPosition());
-//                telemetry.addData("LF Inches", robot.LF.getCurrentPosition() / COUNTS_PER_INCH);
-//                telemetry.addData("LB Inches", robot.LB.getCurrentPosition() / COUNTS_PER_INCH);
-//                telemetry.addData("RF Inches", robot.RF.getCurrentPosition() / COUNTS_PER_INCH);
-//                telemetry.addData("RB Inches", robot.RB.getCurrentPosition() / COUNTS_PER_INCH);
-//                telemetry.update();
+                telemetry.addData("LF Encoder", robot.LF.getCurrentPosition());
+                telemetry.addData("LB Encoder", robot.LB.getCurrentPosition());
+                telemetry.addData("RF Encoder", robot.RF.getCurrentPosition());
+                telemetry.addData("RB Encoder", robot.RB.getCurrentPosition());
+                telemetry.addData("RTL Encoder", robot.RTL.getCurrentPosition());
+                telemetry.addData("LTL Encoder", robot.LTL.getCurrentPosition());
+                telemetry.addData("LF Inches", robot.LF.getCurrentPosition() / COUNTS_PER_INCH);
+                telemetry.addData("LB Inches", robot.LB.getCurrentPosition() / COUNTS_PER_INCH);
+                telemetry.addData("RF Inches", robot.RF.getCurrentPosition() / COUNTS_PER_INCH);
+                telemetry.addData("RB Inches", robot.RB.getCurrentPosition() / COUNTS_PER_INCH);
+                telemetry.addData("RF Inches", robot.RTL.getCurrentPosition() / COUNTS_PER_INCH);
+                telemetry.addData("RB Inches", robot.LTL.getCurrentPosition() / COUNTS_PER_INCH);
+                telemetry.update();
 //
 //                // Pace this loop so jaw action is reasonable speed.
                 sleep(50);
@@ -107,9 +106,5 @@ public class teleop extends LinearOpMode {
 
         }
 
-    public void clawPosition (double position) {
-        robot.claw.setPosition(position);
     }
-
 }
-
