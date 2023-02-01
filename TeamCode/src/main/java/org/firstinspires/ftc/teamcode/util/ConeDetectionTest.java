@@ -38,7 +38,7 @@ public class ConeDetectionTest extends LinearOpMode {
         });
 
         while(Math.abs(cam.getOffset()) > 50) {
-            robot.chassisSetPower(-0.1 * Math.abs(cam.getOffset())/cam.getOffset());
+            robot.setMotorPowers(-0.1 * Math.abs(cam.getOffset())/cam.getOffset());
         }
 
     }
