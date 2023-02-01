@@ -29,14 +29,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.opmode.VISION.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.opmode.VISION.Vision;
-import org.firstinspires.ftc.teamcode.officialAutos.VISION.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="Blue terminal blue substation andon mode", group="Pushbot")
+@Autonomous(name="Blue terminal blue substation 1", group="Pushbot")
 public class CyclesBTBS extends LinearOpMode{
     public static Pose2d preloadEnd;
     public static Pose2d cycleEnd;
@@ -70,7 +70,6 @@ public class CyclesBTBS extends LinearOpMode{
             public void onError(int errorCode) {}
         });
 
-
         //ROBOT + trajectory initializations
         Pose2d start = new Pose2d(-36, 60, Math.toRadians(-90));
         drive.setPoseEstimate(start);
@@ -81,13 +80,13 @@ public class CyclesBTBS extends LinearOpMode{
                 .setReversed(true)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     robot.claw.setPosition(1);
-                    robot.liftEncoderDrive(0.02, 35);
+                    robot.liftEncoderDrive(0.02, 35, 35);
                 })
                 .forward(41.5)
                 .splineToConstantHeading(new Vector2d(-24, 11), Math.toRadians(-90))
                 .waitSeconds(0.5)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.liftEncoderDrive(-0.01, 5);
+                    robot.liftEncoderDrive(-0.01, 5, 5);
                     robot.claw.setPosition(0.1);
                 })
                 .waitSeconds(0.75)
@@ -128,33 +127,31 @@ public class CyclesBTBS extends LinearOpMode{
 
 
 
-
     }
 
     public void cycles(int numCycles, SampleMecanumDrive drive, RobotHardware robot) {
         ElapsedTime time = new ElapsedTime();
         TrajectorySequence cycle = drive.trajectorySequenceBuilder(preloadEnd)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.liftEncoderDrive(-0.01, 32);
+                    robot.liftEncoderDrive(-0.01, 32, 32);
                 })
                 .forward(3)
                 .lineToLinearHeading(new Pose2d(-56.5, 11.75, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     while (getDistance() < 5) {
-                        robot.lift(0.05);
+                        robot.lift(0.1);
                     }
                     robot.lift(0);
                 })
-                .waitSeconds(1.7)
-                .forward(3)
+                .waitSeconds(0.8)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     robot.claw.setPosition(1);
-                    robot.liftEncoderDrive(0.05, 35);
+                    robot.liftEncoderDrive(0.05, 200, 200);
                 })
                 .waitSeconds(0.75)
                 .lineToLinearHeading(preloadEnd)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.liftEncoderDrive(-0.05, 3);
+                    robot.liftEncoderDrive(-0.05, 3, 3);
                     robot.claw.setPosition(0.1);
                 })
                 .build();
@@ -171,6 +168,7 @@ public class CyclesBTBS extends LinearOpMode{
                 i = numCycles + 1;
             }
         }
+
         cycleEnd = cycle.end();
     }
 

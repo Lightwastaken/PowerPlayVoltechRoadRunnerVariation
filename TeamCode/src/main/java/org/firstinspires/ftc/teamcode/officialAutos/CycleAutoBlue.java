@@ -37,6 +37,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
+@Disabled
 @Autonomous(name="Blue terminal blue substation", group="Pushbot")
 public class CycleAutoBlue extends LinearOpMode {
     public static Pose2d preloadEnd;

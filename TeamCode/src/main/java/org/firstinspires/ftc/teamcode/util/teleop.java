@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.util;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.officialAutos.RobotHardware;
 
 @TeleOp(name="teleopgilbert", group="Pushbot")
-public class teleop extends LinearOpMode {
+public class teleop extends LinearOpMode implements Runnable {
 
-    /* Declare OpMode members. */;   // Use a Pushbot's hardware
+    /* Declare OpMode members. */
+    ;   // Use a Pushbot's hardware
     RobotHardware robot = new RobotHardware(this);
 
     @Override
@@ -79,32 +82,39 @@ public class teleop extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                robot.lift(-0.2);
-
-            } else if (gamepad1.right_trigger > 0.1) {
-                robot.lift(0.2);
-            } else {
-                robot.lift(0);
-
-                telemetry.addData("LF Encoder", robot.LF.getCurrentPosition());
-                telemetry.addData("LB Encoder", robot.LB.getCurrentPosition());
-                telemetry.addData("RF Encoder", robot.RF.getCurrentPosition());
-                telemetry.addData("RB Encoder", robot.RB.getCurrentPosition());
-                telemetry.addData("RTL Encoder", robot.RTL.getCurrentPosition());
-                telemetry.addData("LTL Encoder", robot.LTL.getCurrentPosition());
-                telemetry.addData("LF Inches", robot.LF.getCurrentPosition() / COUNTS_PER_INCH);
-                telemetry.addData("LB Inches", robot.LB.getCurrentPosition() / COUNTS_PER_INCH);
-                telemetry.addData("RF Inches", robot.RF.getCurrentPosition() / COUNTS_PER_INCH);
-                telemetry.addData("RB Inches", robot.RB.getCurrentPosition() / COUNTS_PER_INCH);
-                telemetry.addData("RF Inches", robot.RTL.getCurrentPosition() / COUNTS_PER_INCH);
-                telemetry.addData("RB Inches", robot.LTL.getCurrentPosition() / COUNTS_PER_INCH);
-                telemetry.update();
-//
-//                // Pace this loop so jaw action is reasonable speed.
-                sleep(50);
+                robot.moveUp();
             }
 
+            if (gamepad1.left_bumper) {
+                robot.moveDown();
+            }
+
+               telemetry.addData("LF Encoder", robot.LF.getCurrentPosition());
+               telemetry.addData("LB Encoder", robot.LB.getCurrentPosition());
+               telemetry.addData("RF Encoder", robot.RF.getCurrentPosition());
+               telemetry.addData("RB Encoder", robot.RB.getCurrentPosition());
+               telemetry.addData("LF Inches", robot.LF.getCurrentPosition() / COUNTS_PER_INCH);
+               telemetry.addData("LTL ticks", robot.LTL.getCurrentPosition());
+               telemetry.addData("LTL current", robot.LTL.getCurrent(CurrentUnit.AMPS));
+               telemetry.addData("RTL ticks", robot.RTL.getCurrentPosition());
+               telemetry.addData("RTL current", robot.RTL.getCurrent(CurrentUnit.AMPS));
+               telemetry.addData("LB Inches", robot.LB.getCurrentPosition() / COUNTS_PER_INCH);
+               telemetry.addData("RF Inches", robot.RF.getCurrentPosition() / COUNTS_PER_INCH);
+               telemetry.addData("RB Inches", robot.RB.getCurrentPosition() / COUNTS_PER_INCH);
+               telemetry.update();
+
+               // Pace this loop so jaw action is reasonable speed.
+                sleep(50);
+            }
         }
 
+    public void clawPosition (double position) {
+        robot.claw.setPosition(position);
+    }
+
+    public void run() {
+        robot.getAbsoluteAngle();
+        double fov = 55;
     }
 }
+
