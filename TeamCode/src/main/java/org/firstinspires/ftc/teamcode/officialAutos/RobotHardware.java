@@ -356,7 +356,7 @@ public class RobotHardware {
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
-
+/*
     public void liftEncoderDrive(double speed, double rightlift, double leftLift) {
         int heightTarget;
         int heightTarget2;
@@ -399,7 +399,7 @@ public class RobotHardware {
 
 
     }
-
+*/
     public void encoderDrive(double driveSpeed, int i, int i1) {
     }
 
@@ -420,6 +420,7 @@ public class RobotHardware {
         LTL.setPower(power);
     }
 
+    /*
     public void moveUp() {
         int targetPosition;
         if (RTL.getCurrentPosition() < MED_JUNC - 5 && LTL.getCurrentPosition() < MED_JUNC - 5) {
@@ -436,5 +437,13 @@ public class RobotHardware {
     public void moveDown() {
         liftEncoderDrive(-OUTTAKE_SPEED, 0, 0);
         telemetry.addData("target pos: ", "0");
+    }
+     */
+
+    public void chassisSetPower(double power) {
+        RF.setPower(power);
+        RB.setPower(power);
+        LF.setPower(power);
+        LB.setPower(power);
     }
 }

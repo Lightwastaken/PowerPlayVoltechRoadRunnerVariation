@@ -6,10 +6,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.officialAutos.RobotHardware;
 
 @TeleOp(name="teleopgilbert", group="Pushbot")
-public class teleop extends LinearOpMode implements Runnable {
+public class teleop extends LinearOpMode{
 
     /* Declare OpMode members. */
-    ;   // Use a Pushbot's hardware
+    // Use a Pushbot's hardware
     RobotHardware robot = new RobotHardware(this);
 
     @Override
@@ -21,12 +21,6 @@ public class teleop extends LinearOpMode implements Runnable {
         final double WHEEL_DIAMETER_INCHES = 96.0 / 25.4;     // For figuring circumference
         final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                 (WHEEL_DIAMETER_INCHES * 3.1415);
-        boolean maskMoveUp = false;
-        boolean maskMoveDown = false;
-
-        double left;
-        double right;
-        double max;
         double speedControl = 0.90;
 
         /* Initialize the hardware variables.
@@ -37,19 +31,16 @@ public class teleop extends LinearOpMode implements Runnable {
         telemetry.addData("Say", "Hello Driver");
         telemetry.update();
 
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         while (opModeIsActive()) {
-
-
             // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.
-            double y = -gamepad1.right_stick_y; // Remember, this is reversed!
-            double x = gamepad1.right_stick_x * 1.1; // Counteract imperfect strafing
-            double rx = gamepad1.left_stick_x;
+            double y = -gamepad1.right_stick_y * speedControl; // Remember, this is reversed!
+            double x = gamepad1.right_stick_x * 1.1 * speedControl; // Counteract imperfect strafing
+            double rx = gamepad1.left_stick_x * speedControl;
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
@@ -60,16 +51,12 @@ public class teleop extends LinearOpMode implements Runnable {
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
-            robot.LF.setPower(frontLeftPower * speedControl);
-            robot.LB.setPower(backLeftPower * speedControl);
-            robot.RF.setPower(frontRightPower * speedControl);
-            robot.RB.setPower(backRightPower * speedControl);
+            robot.LF.setPower(frontLeftPower);
+            robot.LB.setPower(backLeftPower);
+            robot.RF.setPower(frontRightPower);
+            robot.RB.setPower(backRightPower);
 
             if (gamepad1.left_trigger > 0.1) {
-                speedControl = 1.0;
-            }
-
-            if (gamepad1.left_bumper) {
                 speedControl = 0.25;
             }
 
@@ -81,12 +68,12 @@ public class teleop extends LinearOpMode implements Runnable {
                 robot.claw.setPosition(1);
             }
 
-            if (gamepad1.right_bumper) {
-                robot.moveUp();
+            if (gamepad1.left_bumper) {
+                robot.lift(0.1);
             }
 
-            if (gamepad1.left_bumper) {
-                robot.moveDown();
+            if (gamepad1.right_bumper) {
+                robot.lift(-0.1);
             }
 
                telemetry.addData("LF Encoder", robot.LF.getCurrentPosition());
@@ -104,17 +91,12 @@ public class teleop extends LinearOpMode implements Runnable {
                telemetry.update();
 
                // Pace this loop so jaw action is reasonable speed.
-                sleep(50);
+                sleep(25);
             }
         }
 
     public void clawPosition (double position) {
         robot.claw.setPosition(position);
-    }
-
-    public void run() {
-        robot.getAbsoluteAngle();
-        double fov = 55;
     }
 }
 

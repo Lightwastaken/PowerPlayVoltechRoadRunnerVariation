@@ -28,7 +28,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.officialAutos.VISION.AprilTagDetectionPipeline;
+
+import org.firstinspires.ftc.teamcode.drive.opmode.VISION.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -37,7 +38,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Disabled
 @Autonomous(name="Blue terminal blue substation", group="Pushbot")
 public class CycleAutoBlue extends LinearOpMode {
     public static Pose2d preloadEnd;
