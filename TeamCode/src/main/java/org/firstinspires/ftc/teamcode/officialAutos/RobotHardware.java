@@ -119,7 +119,7 @@ public class RobotHardware{
         RTL = myOpMode.hardwareMap.get(DcMotorEx.class, "RTL");
         LTL = myOpMode.hardwareMap.get(DcMotorEx.class, "LTL");
         claw = myOpMode.hardwareMap.get(Servo.class, "CLAW");
-        sensor = myOpMode.hardwareMap.get(DistanceSensor.class, "distance sensor");
+//        sensor = myOpMode.hardwareMap.get(DistanceSensor.class, "distance sensor");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -155,8 +155,7 @@ public class RobotHardware{
         LB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        LTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        RTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
         LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -359,14 +358,14 @@ public class RobotHardware{
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
-    public void liftEncoderDrive(double speed, double rightlift, double leftLift) {
+    public void liftEncoderDrive(double speed, double lift) {
         int heightTarget;
         int heightTarget2;
         if (linearOpMode.opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            heightTarget = LTL.getCurrentPosition() + (int) (rightlift * COUNTS_PER_INCH);
-            heightTarget2 = RTL.getCurrentPosition() + (int) (leftLift * COUNTS_PER_INCH);
+            heightTarget = LTL.getCurrentPosition() + (int) (lift * COUNTS_PER_INCH);
+            heightTarget2 = RTL.getCurrentPosition() + (int) (lift * COUNTS_PER_INCH);
             telemetry.addData("old target", LB.getCurrentPosition());
             LTL.setTargetPosition(heightTarget);
             RTL.setTargetPosition(heightTarget2);
