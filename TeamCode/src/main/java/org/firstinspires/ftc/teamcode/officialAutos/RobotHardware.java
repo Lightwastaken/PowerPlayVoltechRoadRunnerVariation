@@ -67,16 +67,16 @@ import org.firstinspires.ftc.teamcode.Servoconfig;
  *
  */
 
-public class RobotHardware{
+public class RobotHardware {
 
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
 
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
-    public DcMotorEx LF   = null; //left front(chassis)
-    public DcMotorEx LB   = null; //left back(chassis)
-    public DcMotorEx RF  = null; //right front(chassis)
-    public DcMotorEx RB  = null; //right back(chassis)
+    public DcMotorEx LF = null; //left front(chassis)
+    public DcMotorEx LB = null; //left back(chassis)
+    public DcMotorEx RF = null; //right front(chassis)
+    public DcMotorEx RB = null; //right back(chassis)
     public DcMotorEx RTL = null; //right motor(lift)
     public DcMotorEx LTL = null; //left motor(lift)
     public Servo claw = null; //claw
@@ -94,7 +94,7 @@ public class RobotHardware{
     public static final double OUTTAKE_SPEED = 0.1;
     static final double COUNTS_PER_MOTOR_REV = 5281.1;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
-    static final double WHEEL_DIAMETER_INCHES = 96/25.4;     // For figuring circumference
+    static final double WHEEL_DIAMETER_INCHES = 96 / 25.4;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.7;
@@ -108,14 +108,14 @@ public class RobotHardware{
     /**
      * Initialize all the robot's hardware.
      * This method must be called ONCE when the OpMode is initialized.
-     *
+     * <p>
      * All of the hardware devices are accessed via the hardware map, and initialized.
      */
-    public void initHW()    {
+    public void initHW() {
         //INITIALIZE ALL HARDWARE
-        LF  = myOpMode.hardwareMap.get(DcMotorEx.class, "LF");
+        LF = myOpMode.hardwareMap.get(DcMotorEx.class, "LF");
         LB = myOpMode.hardwareMap.get(DcMotorEx.class, "LB");
-        RF  = myOpMode.hardwareMap.get(DcMotorEx.class, "RF");
+        RF = myOpMode.hardwareMap.get(DcMotorEx.class, "RF");
         RB = myOpMode.hardwareMap.get(DcMotorEx.class, "RB");
         RTL = myOpMode.hardwareMap.get(DcMotorEx.class, "RTL");
         LTL = myOpMode.hardwareMap.get(DcMotorEx.class, "LTL");
@@ -150,7 +150,6 @@ public class RobotHardware{
         setMotorPowers(0);
 
 
-
         LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -180,8 +179,8 @@ public class RobotHardware{
     /**
      * Pass the requested wheel motor powers to the appropriate hardware drive motors.
      *
-     * @param leftWheel     Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
-     * @param rightWheel    Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
+     * @param leftWheel  Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
+     * @param rightWheel Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
      */
 
     public void setMotorPowers(double leftWheel, double rightWheel) {
@@ -284,7 +283,7 @@ public class RobotHardware{
 
     public void idleFor(int msTime) {
         runtime.reset();
-        while (runtime.milliseconds() < msTime);
+        while (runtime.milliseconds() < msTime) ;
     }
 
     // below are the encoder driving methods, with three overloads
@@ -357,6 +356,7 @@ public class RobotHardware{
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
+
     public void liftEncoderDrive(double speed, double rightlift, double leftLift) {
         int heightTarget;
         int heightTarget2;
@@ -402,6 +402,7 @@ public class RobotHardware{
 
     public void encoderDrive(double driveSpeed, int i, int i1) {
     }
+
     public void encoderDrive(double speed, double allMotors) {
         encoderDrive(speed, allMotors, allMotors, allMotors, allMotors);
     }
@@ -413,6 +414,7 @@ public class RobotHardware{
             return false;
         }
     }
+
     public void lift(double power) {
         RTL.setPower(power);
         LTL.setPower(power);
@@ -436,4 +438,3 @@ public class RobotHardware{
         telemetry.addData("target pos: ", "0");
     }
 }
-

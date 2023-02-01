@@ -6,7 +6,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.officialAutos.RobotHardware;
 
 @TeleOp(name="teleopgilbert", group="Pushbot")
-public class teleop extends LinearOpMode {
+public class teleop extends LinearOpMode implements Runnable {
 
     /* Declare OpMode members. */
     ;   // Use a Pushbot's hardware
@@ -106,12 +106,15 @@ public class teleop extends LinearOpMode {
                // Pace this loop so jaw action is reasonable speed.
                 sleep(50);
             }
-
         }
 
     public void clawPosition (double position) {
         robot.claw.setPosition(position);
     }
 
+    public void run() {
+        robot.getAbsoluteAngle();
+        double fov = 55;
+    }
 }
 
