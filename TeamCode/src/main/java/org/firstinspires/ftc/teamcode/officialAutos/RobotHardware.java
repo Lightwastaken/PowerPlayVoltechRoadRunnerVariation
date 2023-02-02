@@ -86,9 +86,11 @@ public class RobotHardware{
     public ElapsedTime runtime = new ElapsedTime();
     public Orientation lastAngles = new Orientation();
     public double currAngle = 0.0;
+    public static final int GROUND_OUTTAKE_POSITION = 100;
     public static final int BOTTOM_OUTTAKE_POSITION = 0;
-    public static final int MID_OUTTAKE_POSITION = 100;
-    public static final int TOP_OUTTAKE_POSITION = 200;
+    public static final int LOW_OUTTAKE_POSITION = 550;
+    public static final int MID_OUTTAKE_POSITION = 900;
+    public static final int TOP_OUTTAKE_POSITION = 1330;
     public static final double OUTTAKE_SPEED = 1 * 117 * 1425.1 / 60;
     static final double COUNTS_PER_MOTOR_REV = 5281.1;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
@@ -421,10 +423,13 @@ public class RobotHardware{
 
     public void moveUp() {
         int targetPosition = 0;
-        if (RTL.getCurrentPosition() < MID_OUTTAKE_POSITION && LTL.getCurrentPosition() < MID_OUTTAKE_POSITION)
-            targetPosition = MID_OUTTAKE_POSITION;
+        if (RTL.getCurrentPosition() < LOW_OUTTAKE_POSITION && LTL.getCurrentPosition() < LOW_OUTTAKE_POSITION)
+            targetPosition = LOW_OUTTAKE_POSITION;
+        else if(RTL.getCurrentPosition() < MID_OUTTAKE_POSITION && LTL.getCurrentPosition() < MID_OUTTAKE_POSITION)
+        targetPosition = MID_OUTTAKE_POSITION;
         else if (RTL.getCurrentPosition() < TOP_OUTTAKE_POSITION && LTL.getCurrentPosition() < TOP_OUTTAKE_POSITION)
             targetPosition = TOP_OUTTAKE_POSITION;
+
         RTL.setTargetPosition(targetPosition);
         LTL.setTargetPosition(targetPosition);
         RTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -436,14 +441,17 @@ public class RobotHardware{
 
     public void moveDown() {
         int targetPosition = 0;
-        if (RTL.getCurrentPosition() >= MID_OUTTAKE_POSITION && LTL.getCurrentPosition() >= MID_OUTTAKE_POSITION)
+        if (RTL.getCurrentPosition() >= LOW_OUTTAKE_POSITION && LTL.getCurrentPosition() >= LOW_OUTTAKE_POSITION)
+            targetPosition = GROUND_OUTTAKE_POSITION;
+        else if(RTL.getCurrentPosition() >= GROUND_OUTTAKE_POSITION && LTL.getCurrentPosition() >= GROUND_OUTTAKE_POSITION)
             targetPosition = BOTTOM_OUTTAKE_POSITION;
+        RTL.setVelocity(-OUTTAKE_SPEED);
+        LTL.setVelocity(-OUTTAKE_SPEED);
         RTL.setTargetPosition(targetPosition);
         LTL.setTargetPosition(targetPosition);
         RTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         LTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        RTL.setVelocity(OUTTAKE_SPEED);
-        LTL.setVelocity(OUTTAKE_SPEED);
+
     }
 }
 

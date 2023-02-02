@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.officialAutos.RobotHardware;
@@ -85,15 +86,27 @@ public class teleop extends LinearOpMode implements Runnable {
                 robot.moveUp();
             }
 
-            if (gamepad1.left_bumper) {
+            if (gamepad1.right_trigger > 0.1) {
                 robot.moveDown();
+                robot.RTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.LTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
+            if (gamepad1.dpad_up) {
+                robot.lift(0.2);
+            }
+            if (gamepad1.dpad_down) {
+                robot.lift(-0.2);
+            }
+            if (gamepad1.dpad_right) {
+                robot.RTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.LTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
 
                telemetry.addData("LF Encoder", robot.LF.getCurrentPosition());
                telemetry.addData("LB Encoder", robot.LB.getCurrentPosition());
                telemetry.addData("RF Encoder", robot.RF.getCurrentPosition());
                telemetry.addData("RB Encoder", robot.RB.getCurrentPosition());
-               telemetry.addData("LF Inches", robot.LF.getCurrentPosition() / COUNTS_PER_INCH);
+               telemetry.addData( "LF Inches", robot.LF.getCurrentPosition() / COUNTS_PER_INCH);
                telemetry.addData("LTL ticks", robot.LTL.getCurrentPosition());
                telemetry.addData("LTL current", robot.LTL.getCurrent(CurrentUnit.AMPS));
                telemetry.addData("RTL ticks", robot.RTL.getCurrentPosition());
@@ -104,7 +117,7 @@ public class teleop extends LinearOpMode implements Runnable {
                telemetry.update();
 
                // Pace this loop so jaw action is reasonable speed.
-                sleep(50);
+                sleep(10);
             }
         }
 
