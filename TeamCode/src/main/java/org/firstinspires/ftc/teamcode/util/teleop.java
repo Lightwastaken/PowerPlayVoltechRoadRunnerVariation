@@ -88,8 +88,6 @@ public class teleop extends LinearOpMode implements Runnable {
 
             if (gamepad1.right_trigger > 0.1) {
                 robot.moveDown();
-                robot.RTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.LTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
             if (gamepad1.dpad_up) {
                 robot.lift(0.2);
@@ -117,7 +115,7 @@ public class teleop extends LinearOpMode implements Runnable {
                telemetry.update();
 
                // Pace this loop so jaw action is reasonable speed.
-                sleep(10);
+               //sleep(10);
             }
         }
 
