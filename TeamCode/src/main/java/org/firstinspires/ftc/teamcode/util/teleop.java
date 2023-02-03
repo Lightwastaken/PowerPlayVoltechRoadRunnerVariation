@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.officialAutos.RobotHardware;
 public class teleop extends LinearOpMode implements Runnable {
 
     /* Declare OpMode members. */
-    ;   // Use a Pushbot's hardware
+      // Use a Pushbot's hardware
     RobotHardware robot = new RobotHardware(this);
 
     @Override
@@ -63,7 +63,7 @@ public class teleop extends LinearOpMode implements Runnable {
 
             robot.LF.setPower(frontLeftPower * speedControl);
             robot.LB.setPower(backLeftPower * speedControl);
-            robot.RF.setPower(frontRightPower * speedControl);
+            robot.RF.setPower(frontRightPower *  speedControl);
             robot.RB.setPower(backRightPower * speedControl);
 
             if (gamepad1.left_trigger > 0.1) {
@@ -82,36 +82,30 @@ public class teleop extends LinearOpMode implements Runnable {
                 robot.claw.setPosition(1);
             }
 
-            if (gamepad1.right_bumper) {
-                robot.moveUp();
-            }
+ //           if (gamepad1.right_bumper) {
+   //             robot.moveUp();
+     //        }
 
-            if (gamepad1.right_trigger > 0.1) {
-                robot.moveDown();
-            }
+ //           if (gamepad1.right_trigger > 0.1) {
+   //             robot.moveDown();
+     //       }
             if (gamepad1.dpad_up) {
-                robot.lift(0.2);
+                robot.lift(-0.1);
             }
             if (gamepad1.dpad_down) {
-                robot.lift(-0.2);
+                robot.lift(0.1);
             }
-            if (gamepad1.dpad_right) {
-                robot.RTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.LTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            }
+   //         if (gamepad1.dpad_right) {
+     //           robot.RTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //        robot.LTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+          //  }
 
-               telemetry.addData("LF Encoder", robot.LF.getCurrentPosition());
-               telemetry.addData("LB Encoder", robot.LB.getCurrentPosition());
-               telemetry.addData("RF Encoder", robot.RF.getCurrentPosition());
-               telemetry.addData("RB Encoder", robot.RB.getCurrentPosition());
-               telemetry.addData( "LF Inches", robot.LF.getCurrentPosition() / COUNTS_PER_INCH);
+               telemetry.addData("LF ticks", robot.LF.getCurrentPosition());
+               telemetry.addData("LB ticks", robot.LB.getCurrentPosition());
+               telemetry.addData("RF ticks", robot.RF.getCurrentPosition());
+               telemetry.addData("RB ticks", robot.RB.getCurrentPosition());
                telemetry.addData("LTL ticks", robot.LTL.getCurrentPosition());
-               telemetry.addData("LTL current", robot.LTL.getCurrent(CurrentUnit.AMPS));
                telemetry.addData("RTL ticks", robot.RTL.getCurrentPosition());
-               telemetry.addData("RTL current", robot.RTL.getCurrent(CurrentUnit.AMPS));
-               telemetry.addData("LB Inches", robot.LB.getCurrentPosition() / COUNTS_PER_INCH);
-               telemetry.addData("RF Inches", robot.RF.getCurrentPosition() / COUNTS_PER_INCH);
-               telemetry.addData("RB Inches", robot.RB.getCurrentPosition() / COUNTS_PER_INCH);
                telemetry.update();
 
                // Pace this loop so jaw action is reasonable speed.
