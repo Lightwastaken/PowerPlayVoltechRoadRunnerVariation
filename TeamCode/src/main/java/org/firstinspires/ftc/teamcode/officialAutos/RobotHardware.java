@@ -92,7 +92,7 @@ public class RobotHardware implements Runnable {
     public static final int LOW_OUTTAKE_POSITION = 550;
     public static final int MID_OUTTAKE_POSITION = 900;
     public static final int TOP_OUTTAKE_POSITION = 1330;
-    public static final double OUTTAKE_SPEED = 0.5 * 117 * 1425.1 / 60;
+    public static final double OUTTAKE_SPEED = 30 * 5281.1 / 60; //RPM * ENCODER TICKS PER REV / 60
     static final double COUNTS_PER_MOTOR_REV = 5281.1;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 96/25.4;     // For figuring circumference
@@ -394,11 +394,7 @@ public class RobotHardware implements Runnable {
     }
 */
     public boolean isChassisVeloZero() {
-        if (LF.getVelocity() == 0 && LB.getVelocity() == 0 && RF.getVelocity() == 0 && RB.getVelocity() == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return LF.getVelocity() == 0 && LB.getVelocity() == 0 && RF.getVelocity() == 0 && RB.getVelocity() == 0;
     }
     public void lift(double power){
         RTL.setPower(power);
@@ -417,6 +413,9 @@ public class RobotHardware implements Runnable {
         LTL.setTargetPosition(targetPosition);
         RTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         LTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RTL.setVelocity(0.2 * OUTTAKE_SPEED);
+        LTL.setVelocity(0.2 * OUTTAKE_SPEED);
+
 
         while (LTL.isBusy() && RTL.isBusy() && linearOpMode.opModeIsActive()) {
             linearOpMode.idle();
@@ -439,8 +438,8 @@ public class RobotHardware implements Runnable {
         LTL.setTargetPosition(targetPosition);
         RTL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         LTL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        RTL.setVelocity(OUTTAKE_SPEED);
-        LTL.setVelocity(OUTTAKE_SPEED);
+        RTL.setVelocity(0.1 * OUTTAKE_SPEED);
+        LTL.setVelocity(0.1 * OUTTAKE_SPEED);
 
         while (LTL.isBusy() && RTL.isBusy() && linearOpMode.opModeIsActive()) {
             linearOpMode.idle();
