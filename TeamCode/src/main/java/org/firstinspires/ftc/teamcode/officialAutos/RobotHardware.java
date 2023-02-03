@@ -418,6 +418,10 @@ public class RobotHardware implements Runnable {
         RTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         LTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        while (LTL.isBusy() && RTL.isBusy() && linearOpMode.opModeIsActive()) {
+            linearOpMode.idle();
+        }
+
         while (Math.abs(getLiftError()) > 25) {
             liftPID.start();
             if (getBatteryVoltage() < 10.0) {
@@ -437,6 +441,10 @@ public class RobotHardware implements Runnable {
         LTL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         RTL.setVelocity(OUTTAKE_SPEED);
         LTL.setVelocity(OUTTAKE_SPEED);
+
+        while (LTL.isBusy() && RTL.isBusy() && linearOpMode.opModeIsActive()) {
+            linearOpMode.idle();
+        }
 
         while (Math.abs(getLiftError()) > 25) {
             liftPID.start();

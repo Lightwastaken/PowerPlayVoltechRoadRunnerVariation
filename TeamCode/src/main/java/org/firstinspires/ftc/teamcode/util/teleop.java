@@ -110,8 +110,6 @@ public class teleop extends LinearOpMode {
                telemetry.addData("LTL ticks", robot.LTL.getCurrentPosition());
                telemetry.addData("RTL ticks", robot.RTL.getCurrentPosition());
                telemetry.update();
-
-               sleep(25);
             }
         }
 
