@@ -122,7 +122,7 @@ public class CyclesBTBS extends LinearOpMode{
         }
 
         while (robot.isChassisVeloZero() && currentState == states.CYCLES_1) {
-            distanceSensorGetDistance.run();
+            distanceSensorGetDistance.start();
         }
 
 

@@ -67,7 +67,7 @@ import org.firstinspires.ftc.teamcode.Servoconfig;
  *
  */
 
-public class RobotHardware{
+public class RobotHardware implements Runnable {
 
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
@@ -98,21 +98,28 @@ public class RobotHardware{
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.7;
+    public int targetPosition = 0;
+
+    //PID stuffs
+    double kp = 0.1;
+    double ki = 0.1;
+    double kd = 0.1;
+    double integralSum = 0;
+    double lastError = 0;
+    double derivative;
+    double error = getLiftError();
+    ElapsedTime timer = new ElapsedTime();
+    Thread liftPID = new Thread(new RobotHardware());
 
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public RobotHardware(LinearOpMode opmode) {
         myOpMode = opmode;
     }
+    public RobotHardware() {}
 
 
-    /**
-     * Initialize all the robot's hardware.
-     * This method must be called ONCE when the OpMode is initialized.
-     *
-     * All of the hardware devices are accessed via the hardware map, and initialized.
-     */
-    public void initHW()    {
+    public void initHW() {
         //INITIALIZE ALL HARDWARE
         LF  = myOpMode.hardwareMap.get(DcMotorEx.class, "LF");
         LB = myOpMode.hardwareMap.get(DcMotorEx.class, "LB");
@@ -149,15 +156,11 @@ public class RobotHardware{
         LTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         claw.setPosition(1);
         setMotorPowers(0);
-        //(double) 267 / 270, (double) 3 / 270
-
-
 
         LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
 
         LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -167,26 +170,11 @@ public class RobotHardware{
         LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-
         // Send telemetry message to signify robot waiting;
     }
 
-    /**
-     * Calculates the left/right motor powers required to achieve the requested
-     * robot motions: Drive (Axial motion) and Turn (Yaw motion).
-     * Then sends these power levels to the motors.
-     *
-     * @param Drive     Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
-     * @param Turn      Right/Left turning power (-1.0 to 1.0) +ve is CW
-     */
 
-    /**
-     * Pass the requested wheel motor powers to the appropriate hardware drive motors.
-     *
-     * @param leftWheel     Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
-     * @param rightWheel    Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
-     */
-
+/*
     public void setMotorPowers(double leftWheel, double rightWheel) {
         // Output the values to the motor drives.
         LF.setPower(leftWheel);
@@ -194,7 +182,7 @@ public class RobotHardware{
         RF.setPower(rightWheel);
         RB.setPower(rightWheel);
     }
-
+*/
     public void setMotorPowers(double LFP, double LBP, double RFP, double RBP) {
         // Output the values to the motor drives.
         LF.setPower(LFP);
@@ -211,7 +199,7 @@ public class RobotHardware{
         RB.setPower(speed);
     }
 
-    double getBatteryVoltage() {
+    public double getBatteryVoltage() {
         double result = Double.POSITIVE_INFINITY;
         for (VoltageSensor sensor : myOpMode.hardwareMap.voltageSensor) {
             double voltage = sensor.getVoltage();
@@ -250,7 +238,7 @@ public class RobotHardware{
         resetAngle();
 
         double error = degrees;
-//
+
         while (linearOpMode.opModeIsActive() && Math.abs(error) > 2) {
             double motorPower = (error < 0 ? -0.2 : 0.2);
             setMotorPowers(-motorPower, motorPower, -motorPower, motorPower);
@@ -264,6 +252,7 @@ public class RobotHardware{
         setMotorPowers(0);
     }
 
+    /*
     public void turnTo(double degrees) {
 
         Orientation orientation = imuu.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -278,19 +267,14 @@ public class RobotHardware{
 
         turn(error);
     }
-
+*/
     public double getAbsoluteAngle() {
         return imuu.imu.getAngularOrientation(
                 AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES
         ).firstAngle;
     }
 
-    public void idleFor(int msTime) {
-        runtime.reset();
-        while (runtime.milliseconds() < msTime);
-    }
-
-    // below are the encoder driving methods, with three overloads
+    /*
     public void encoderDrive(double speed, double leftFront, double rightFront, double leftBack, double rightBack) {
         int newLeftFrontTarget;
         int newLeftBackTarget;
@@ -360,6 +344,7 @@ public class RobotHardware{
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
+    */
     public void liftEncoderDrive(double speed, double lift) {
         int heightTarget;
         int heightTarget2;
@@ -403,12 +388,13 @@ public class RobotHardware{
 
     }
 
+/*
     public void encoderDrive(double driveSpeed, int i, int i1) {
     }
     public void encoderDrive(double speed, double allMotors) {
         encoderDrive(speed, allMotors, allMotors, allMotors, allMotors);
     }
-
+*/
     public boolean isChassisVeloZero() {
         if (LF.getVelocity() == 0 && LB.getVelocity() == 0 && RF.getVelocity() == 0 && RB.getVelocity() == 0) {
             return true;
@@ -422,11 +408,10 @@ public class RobotHardware{
     }
 
     public void moveUp() {
-        int targetPosition = 0;
         if (RTL.getCurrentPosition() < LOW_OUTTAKE_POSITION && LTL.getCurrentPosition() < LOW_OUTTAKE_POSITION)
             targetPosition = LOW_OUTTAKE_POSITION;
         else if(RTL.getCurrentPosition() < MID_OUTTAKE_POSITION && LTL.getCurrentPosition() < MID_OUTTAKE_POSITION)
-        targetPosition = MID_OUTTAKE_POSITION;
+            targetPosition = MID_OUTTAKE_POSITION;
         else if (RTL.getCurrentPosition() < TOP_OUTTAKE_POSITION && LTL.getCurrentPosition() < TOP_OUTTAKE_POSITION)
             targetPosition = TOP_OUTTAKE_POSITION;
 
@@ -435,11 +420,19 @@ public class RobotHardware{
         RTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         LTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-
+        while (Math.abs(getLiftError()) > 25) {
+            liftPID.start();
+            if (getBatteryVoltage() < 10.0) {
+                lift(0);
+                break;
+            }
+        }
+        telemetry.addData("Lift error", getLiftError());
+        telemetry.update();
     }
 
     public void moveDown() {
-        int targetPosition = 100;
+        targetPosition = 100;
         RTL.setTargetPosition(targetPosition);
         LTL.setTargetPosition(targetPosition);
         RTL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -447,6 +440,29 @@ public class RobotHardware{
         RTL.setVelocity(OUTTAKE_SPEED);
         LTL.setVelocity(OUTTAKE_SPEED);
 
+        while (Math.abs(getLiftError()) > 25) {
+            liftPID.start();
+            if (getBatteryVoltage() < 10.0) {
+                lift(0);
+                break;
+            }
+        }
+        telemetry.addData("Lift error", getLiftError());
+        telemetry.update();
+    }
+
+    public double getLiftError() {
+        return RTL.getCurrentPosition() - targetPosition;
+    }
+
+    public void run() {
+        derivative = (error - lastError)/timer.seconds();
+        integralSum += (error * timer.seconds());
+        lift((kp * error) + (ki * integralSum) + (kd * derivative));
+
+        lastError = error;
+        timer.reset();
     }
 }
+
 

@@ -82,23 +82,26 @@ public class teleop extends LinearOpMode implements Runnable {
                 robot.claw.setPosition(1);
             }
 
- //           if (gamepad1.right_bumper) {
-   //             robot.moveUp();
-     //        }
+            if (gamepad1.right_bumper) {
+               robot.moveUp();
+            }
 
- //           if (gamepad1.right_trigger > 0.1) {
-   //             robot.moveDown();
-     //       }
+            if (gamepad1.right_trigger > 0.1) {
+               robot.moveDown();
+            }
+
             if (gamepad1.dpad_up) {
                 robot.lift(-0.1);
             }
+
             if (gamepad1.dpad_down) {
                 robot.lift(0.1);
             }
-   //         if (gamepad1.dpad_right) {
-     //           robot.RTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //        robot.LTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-          //  }
+
+            if (gamepad1.dpad_right) {
+                robot.RTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.LTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
 
                telemetry.addData("LF ticks", robot.LF.getCurrentPosition());
                telemetry.addData("LB ticks", robot.LB.getCurrentPosition());
@@ -108,15 +111,15 @@ public class teleop extends LinearOpMode implements Runnable {
                telemetry.addData("RTL ticks", robot.RTL.getCurrentPosition());
                telemetry.update();
 
-               // Pace this loop so jaw action is reasonable speed.
-               //sleep(10);
+               sleep(25);
             }
         }
 
+        /*
     public void clawPosition (double position) {
         robot.claw.setPosition(position);
     }
-
+*/
     public void run() {
         robot.getAbsoluteAngle();
         double fov = 55;
