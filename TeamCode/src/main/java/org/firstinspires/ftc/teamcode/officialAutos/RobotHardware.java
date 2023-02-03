@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -101,9 +102,6 @@ public class RobotHardware implements Runnable {
     public int targetPosition = 0;
 
     //PID stuffs
-    double kp = 0.1;
-    double ki = 0.1;
-    double kd = 0.1;
     double integralSum = 0;
     double lastError = 0;
     double derivative;
@@ -456,6 +454,11 @@ public class RobotHardware implements Runnable {
     }
 
     public void run() {
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(0.1, 0.1, 0.1, 0);
+        double kp = pidfCoefficients.p;
+        double ki = pidfCoefficients.i;
+        double kd = pidfCoefficients.d;
+
         derivative = (error - lastError)/timer.seconds();
         integralSum += (error * timer.seconds());
         lift((kp * error) + (ki * integralSum) + (kd * derivative));
