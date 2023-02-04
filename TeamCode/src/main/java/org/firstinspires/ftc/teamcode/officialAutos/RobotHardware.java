@@ -183,6 +183,59 @@ public class RobotHardware {
 
         // Send telemetry message to signify robot waiting;
     }
+    public void initHW2() {
+        //INITIALIZE ALL HARDWARE
+        LF  = myOpMode.hardwareMap.get(DcMotorEx.class, "LF");
+        LB = myOpMode.hardwareMap.get(DcMotorEx.class, "LB");
+        RF  = myOpMode.hardwareMap.get(DcMotorEx.class, "RF");
+        RB = myOpMode.hardwareMap.get(DcMotorEx.class, "RB");
+        RTL = myOpMode.hardwareMap.get(DcMotorEx.class, "RTL");
+        LTL = myOpMode.hardwareMap.get(DcMotorEx.class, "LTL");
+        claw = myOpMode.hardwareMap.get(Servo.class, "CLAW");
+//        sensor = myOpMode.hardwareMap.get(DistanceSensor.class, "distance sensor");
+
+        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
+        // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
+        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
+        LF.setDirection(DcMotor.Direction.REVERSE);
+        LB.setDirection(DcMotor.Direction.REVERSE);
+        RF.setDirection(DcMotor.Direction.FORWARD);
+        RB.setDirection(DcMotor.Direction.REVERSE);
+        RTL.setDirection(DcMotorEx.Direction.FORWARD);
+        LTL.setDirection(DcMotorEx.Direction.REVERSE);
+
+        //ALL MOTORS RUN WITH ENCODERS
+        LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        claw.setPosition(1);
+        setMotorPowers(0);
+
+        LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        // Send telemetry message to signify robot waiting;
+    }
 
 
 /*

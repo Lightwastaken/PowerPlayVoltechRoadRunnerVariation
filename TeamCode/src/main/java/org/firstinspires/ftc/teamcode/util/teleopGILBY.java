@@ -31,7 +31,7 @@ public class teleopGILBY extends LinearOpMode {
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
-        robot.initHW();
+        robot.initHW2();
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Hello Driver");
         telemetry.update();
@@ -88,9 +88,9 @@ public class teleopGILBY extends LinearOpMode {
 //            }
 
             if (gamepad1.right_bumper) {
-                robot.moveUp();
+                robot.lift(-0.3);
             } else if (gamepad1.right_trigger > 0.1) {
-                robot.moveDown();
+                robot.lift(0.3);
             } else {
                 robot.lift(0);
             }
