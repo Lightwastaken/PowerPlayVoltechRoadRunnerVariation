@@ -68,7 +68,7 @@ import org.firstinspires.ftc.teamcode.Servoconfig;
  *
  */
 
-public class RobotHardware implements Runnable {
+public class RobotHardware {
 
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
@@ -101,13 +101,16 @@ public class RobotHardware implements Runnable {
     static final double DRIVE_SPEED = 0.7;
     public int targetPosition = 0;
 
-    //PID stuffs
-    double integralSum = 0;
-    double lastError = 0;
-    double derivative;
-    double error = getLiftError();
+
+    public double integralSum = 0;
+    public double lastError = 0;
+    public double derivative;
+    public double Kp = 0.35;
+    public double Ki = 0;
+    public double Kd = 0;
+    public double kF = 10;
     ElapsedTime timer = new ElapsedTime();
-    Thread liftPID = new Thread(new RobotHardware());
+//    Thread liftPID = new Thread(new RobotHardware());
 
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
@@ -143,8 +146,8 @@ public class RobotHardware implements Runnable {
         LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RTL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LTL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -164,8 +167,8 @@ public class RobotHardware implements Runnable {
         LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RTL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LTL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         // Send telemetry message to signify robot waiting;
@@ -421,57 +424,63 @@ public class RobotHardware implements Runnable {
             linearOpMode.idle();
         }
 
-        while (Math.abs(getLiftError()) > 25) {
-            liftPID.start();
-            if (getBatteryVoltage() < 10.0) {
-                lift(0);
-                break;
-            }
-        }
-        telemetry.addData("Lift error", getLiftError());
-        telemetry.update();
+//        while (Math.abs(getLiftError()) > 25) {
+//            liftPID.start();
+//            if (getBatteryVoltage() < 10.0) {
+//                lift(0);
+//                break;
+//            }
+//        }
     }
 
-    public void moveDown() {
-        targetPosition = 100;
-        RTL.setTargetPosition(targetPosition);
-        LTL.setTargetPosition(targetPosition);
-        RTL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        LTL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        RTL.setVelocity(0.1 * OUTTAKE_SPEED);
-        LTL.setVelocity(0.1 * OUTTAKE_SPEED);
-
-        while (LTL.isBusy() && RTL.isBusy() && linearOpMode.opModeIsActive()) {
-            linearOpMode.idle();
-        }
-
-        while (Math.abs(getLiftError()) > 25) {
-            liftPID.start();
-            if (getBatteryVoltage() < 10.0) {
-                lift(0);
-                break;
-            }
-        }
-        telemetry.addData("Lift error", getLiftError());
-        telemetry.update();
-    }
-
-    public double getLiftError() {
-        return RTL.getCurrentPosition() - targetPosition;
-    }
-
-    public void run() {
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(0.1, 0.1, 0.1, 0);
-        double kp = pidfCoefficients.p;
-        double ki = pidfCoefficients.i;
-        double kd = pidfCoefficients.d;
-
-        derivative = (error - lastError)/timer.seconds();
-        integralSum += (error * timer.seconds());
-        lift((kp * error) + (ki * integralSum) + (kd * derivative));
-
+//    public void moveDown() {
+//        targetPosition = 100;
+//        RTL.setTargetPosition(targetPosition);
+//        LTL.setTargetPosition(targetPosition);
+//        RTL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        LTL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        RTL.setVelocity(0.1 * OUTTAKE_SPEED);
+//        LTL.setVelocity(0.1 * OUTTAKE_SPEED);
+//
+//        while (LTL.isBusy() && RTL.isBusy() && linearOpMode.opModeIsActive()) {
+//            linearOpMode.idle();
+//        }
+//
+//        while (Math.abs(getLiftError()) > 25) {
+//            liftPID.start();
+//            if (getBatteryVoltage() < 10.0) {
+//                lift(0);
+//                break;
+//            }
+//        }
+//    }
+//
+//    public double getLiftError() {
+//        return error;
+//    }
+//
+//    public void run() {
+//        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(0.1, 0.1, 0.1, 0);
+//        double kp = pidfCoefficients.p;
+//        double ki = pidfCoefficients.i;
+//        double kd = pidfCoefficients.d;
+//        error = RTL.getCurrentPosition() - targetPosition;
+//
+//        derivative = (error - lastError)/timer.seconds();
+//        integralSum += (error * timer.seconds());
+//        lift((kp * error) + (ki * integralSum) + (kd * derivative));
+//
+//        lastError = error;
+//        timer.reset();
+//    }
+    public double PIDControl( double reference, double state ) {
+        double error = reference - state;
+        integralSum += error * timer.seconds();
+        double derivative = (error - lastError) / timer.seconds();
         lastError = error;
         timer.reset();
+        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+        return output;
     }
 }
 

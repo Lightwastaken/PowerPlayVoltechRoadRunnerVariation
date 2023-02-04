@@ -22,12 +22,7 @@ public class teleop extends LinearOpMode {
         final double WHEEL_DIAMETER_INCHES = 96.0 / 25.4;     // For figuring circumference
         final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                 (WHEEL_DIAMETER_INCHES * 3.1415);
-        boolean maskMoveUp = false;
-        boolean maskMoveDown = false;
 
-        double left;
-        double right;
-        double max;
         double speedControl = 0.90;
 
         /* Initialize the hardware variables.
@@ -83,19 +78,21 @@ public class teleop extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-               robot.moveUp();
+//               robot.lift(robot.PIDControl(1000, robot.RTL.getVelocity()));
+                robot.lift(0.3);
             }
 
             if (gamepad1.right_trigger > 0.1) {
-               robot.moveDown();
+//               robot.moveDown();
+                robot.lift(-0.3);
             }
 
             if (gamepad1.dpad_up) {
-                robot.lift(-0.1);
+                robot.lift(0.1);
             }
 
             if (gamepad1.dpad_down) {
-                robot.lift(0.1);
+                robot.lift(-0.1);
             }
 
             if (gamepad1.dpad_right) {
