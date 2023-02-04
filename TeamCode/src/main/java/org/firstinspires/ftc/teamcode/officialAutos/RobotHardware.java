@@ -29,13 +29,16 @@
 
 package org.firstinspires.ftc.teamcode.officialAutos;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.linearOpMode;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -67,7 +70,7 @@ import org.firstinspires.ftc.teamcode.Servoconfig;
  * Also add a new OpMode, drawing from the Sample ConceptExternalHardwareClass.java; select TeleOp.
  *
  */
-
+@Config
 public class RobotHardware {
 
     /* Declare OpMode members. */
@@ -87,11 +90,11 @@ public class RobotHardware {
     public ElapsedTime runtime = new ElapsedTime();
     public Orientation lastAngles = new Orientation();
     public double currAngle = 0.0;
-    public static final int GROUND_OUTTAKE_POSITION = 100;
-    public static final int BOTTOM_OUTTAKE_POSITION = 0;
-    public static final int LOW_OUTTAKE_POSITION = 550;
-    public static final int MID_OUTTAKE_POSITION = 900;
-    public static final int TOP_OUTTAKE_POSITION = 1330;
+    public static  double GROUND_OUTTAKE_POSITION = 200;
+    public static  double BOTTOM_OUTTAKE_POSITION = 0;
+    public static  double LOW_OUTTAKE_POSITION = 550;
+    public static  double MID_OUTTAKE_POSITION = 900;
+    public static  double TOP_OUTTAKE_POSITION = 1230;
     public static final double OUTTAKE_SPEED = 30 * 5281.1 / 60; //RPM * ENCODER TICKS PER REV / 60
     static final double COUNTS_PER_MOTOR_REV = 5281.1;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
@@ -99,18 +102,24 @@ public class RobotHardware {
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.7;
-    public int targetPosition = 0;
-
+    public static double  targetPosition = 550;
+    private double initalTime = System.currentTimeMillis();
 
     public double integralSum = 0;
     public double lastError = 0;
     public double derivative;
-    public double Kp = 0.35;
-    public double Ki = 0;
-    public double Kd = 0;
-    public double kF = 10;
-//    ElapsedTime timer = new ElapsedTime();
+
+    public static double p = 0.0005;
+    public static double i = 0;
+    public static double d = 0;
+
+    public static  double strafeV = 4;
+    public static  double foward1 = 41.5;
+    public static  double vectorx1= -22;
+    public static  double vectory1= 15.5;
+    ElapsedTime timer = new ElapsedTime();
 //    Thread liftPID = new Thread(new RobotHardware());
+    public double initialTime = System.currentTimeMillis();
 
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
@@ -167,8 +176,8 @@ public class RobotHardware {
         LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RTL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LTL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
 
@@ -405,84 +414,39 @@ public class RobotHardware {
         LTL.setPower(power);
     }
 
+
     public void moveUp() {
-        if (RTL.getCurrentPosition() < LOW_OUTTAKE_POSITION && LTL.getCurrentPosition() < LOW_OUTTAKE_POSITION)
-            targetPosition = LOW_OUTTAKE_POSITION;
-        else if(RTL.getCurrentPosition() < MID_OUTTAKE_POSITION && LTL.getCurrentPosition() < MID_OUTTAKE_POSITION)
-            targetPosition = MID_OUTTAKE_POSITION;
-        else if (RTL.getCurrentPosition() < TOP_OUTTAKE_POSITION && LTL.getCurrentPosition() < TOP_OUTTAKE_POSITION)
-            targetPosition = TOP_OUTTAKE_POSITION;
-
-        RTL.setTargetPosition(targetPosition);
-        LTL.setTargetPosition(targetPosition);
-        RTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        LTL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        RTL.setVelocity(0.2 * OUTTAKE_SPEED);
-        LTL.setVelocity(0.2 * OUTTAKE_SPEED);
-
-
-        while (LTL.isBusy() && RTL.isBusy() && linearOpMode.opModeIsActive()) {
-            linearOpMode.idle();
-        }
-
-//        while (Math.abs(getLiftError()) > 25) {
-//            liftPID.start();
-//            if (getBatteryVoltage() < 10.0) {
-//                lift(0);
-//                break;
-//            }
-//        }
+        targetPosition = 1270;
+        lift(PIDControl(targetPosition, RTL.getCurrentPosition()));
     }
 
-//    public void moveDown() {
-//        targetPosition = 100;
-//        RTL.setTargetPosition(targetPosition);
-//        LTL.setTargetPosition(targetPosition);
-//        RTL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//        LTL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//        RTL.setVelocity(0.1 * OUTTAKE_SPEED);
-//        LTL.setVelocity(0.1 * OUTTAKE_SPEED);
-//
-//        while (LTL.isBusy() && RTL.isBusy() && linearOpMode.opModeIsActive()) {
-//            linearOpMode.idle();
-//        }
-//
-//        while (Math.abs(getLiftError()) > 25) {
-//            liftPID.start();
-//            if (getBatteryVoltage() < 10.0) {
-//                lift(0);
-//                break;
-//            }
-//        }
-//    }
-//
-//    public double getLiftError() {
-//        return error;
-//    }
-//
-//    public void run() {
-//        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(0.1, 0.1, 0.1, 0);
-//        double kp = pidfCoefficients.p;
-//        double ki = pidfCoefficients.i;
-//        double kd = pidfCoefficients.d;
-//        error = RTL.getCurrentPosition() - targetPosition;
-//
-//        derivative = (error - lastError)/timer.seconds();
-//        integralSum += (error * timer.seconds());
-//        lift((kp * error) + (ki * integralSum) + (kd * derivative));
-//
-//        lastError = error;
-//        timer.reset();
-//    }
-//    public double PIDControl( double reference, double state ) {
-//        double error = reference - state;
-//        integralSum += error * timer.seconds();
-//        double derivative = (error - lastError) / timer.seconds();
-//        lastError = error;
-//        timer.reset();
-//        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
-//        return output;
-//    }
+    public void moveDown() {
+        targetPosition = 600;
+        lift(PIDControl(targetPosition, RTL.getCurrentPosition()));
+    }
+
+
+    public double PIDControl(double reference, double state) {
+        double Kp = p;
+        double Ki = i;
+        double Kd = d;
+
+        double error = reference - state;
+        integralSum += error * timer.seconds();
+        double derivative = (error - lastError) / timer.seconds();
+        lastError = error;
+        timer.reset();
+
+        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+        return output;
+    }
+    public void reset() {
+        RTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        RTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
 }
 
 

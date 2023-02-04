@@ -14,6 +14,7 @@ public class teleopGILBY extends LinearOpMode {
     // Use a Pushbot's hardware
     RobotHardware robot = new RobotHardware(this);
 
+
     @Override
     public void runOpMode() {
 
@@ -25,6 +26,8 @@ public class teleopGILBY extends LinearOpMode {
                 (WHEEL_DIAMETER_INCHES * 3.1415);
 
         double speedControl = 0.90;
+        double initialTime = 0;
+
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
@@ -65,7 +68,7 @@ public class teleopGILBY extends LinearOpMode {
 
             robot.LF.setPower(frontLeftPower * speedControl);
             robot.LB.setPower(backLeftPower * speedControl);
-            robot.RF.setPower(frontRightPower *  speedControl);
+            robot.RF.setPower(frontRightPower * speedControl);
             robot.RB.setPower(backRightPower * speedControl);
 
             if (gamepad1.left_trigger > 0.1) {
@@ -85,37 +88,40 @@ public class teleopGILBY extends LinearOpMode {
 //            }
 
             if (gamepad1.right_bumper) {
-                robot.lift(-0.2);
-
-            }
-
-            else if (gamepad1.right_trigger > 0.1) {
-//               robot.moveDown();
-                robot.lift(0.3);
+                robot.moveUp();
+            } else if (gamepad1.right_trigger > 0.1) {
+                robot.moveDown();
             } else {
                 robot.lift(0);
             }
 
-            if (gamepad1.left_stick_x > 0.5) {
-                robot.claw.setPosition(0);
+            if (gamepad1.left_stick_x > 0) {
+                robot.claw.setPosition(0.1);
             }
 
-            if (gamepad1.left_stick_x < 0.5) {
+            if (gamepad1.left_stick_x < 0) {
                 robot.claw.setPosition(1);
             }
 
-//            if (gamepad1.dpad_up) {
-//                robot.lift(0.);
-//            }
-//
-//            if (gamepad1.dpad_down) {
-//                robot.lift(-0.1);
-//            }
+            if (gamepad1.dpad_up) {
+                robot.lift(0.1);
+            }
 
-//            if (gamepad1.dpad_right) {
-//                robot.RTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//                robot.LTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            if (gamepad1.b) {
+                robot.lift(-0.1);
+
+            }
+
+            if (gamepad1.dpad_down) {
+                robot.initialTime = System.currentTimeMillis();
+
+                robot.RTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.LTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+                robot.RTL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                robot.LTL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //            }
+            }
 
             telemetry.addData("LF ticks", robot.LF.getCurrentPosition());
             telemetry.addData("LB ticks", robot.LB.getCurrentPosition());
@@ -123,17 +129,16 @@ public class teleopGILBY extends LinearOpMode {
             telemetry.addData("RB ticks", robot.RB.getCurrentPosition());
             telemetry.addData("LTL ticks", robot.LTL.getCurrentPosition());
             telemetry.addData("RTL ticks", robot.RTL.getCurrentPosition());
-            telemetry.addData("RTL Power", robot.RTL.getPower());
-            telemetry.addData("LTL Power", robot.LTL.getPower());
+            telemetry.addData("LTL power:", robot.LTL.getPower());
+            telemetry.addData("RTL power: ", robot.RTL.getPower());
             telemetry.update();
-            sleep(10);
         }
-    }
 
         /*
     public void clawPosition (double position) {
         robot.claw.setPosition(position);
     }
 */
+    }
 }
 

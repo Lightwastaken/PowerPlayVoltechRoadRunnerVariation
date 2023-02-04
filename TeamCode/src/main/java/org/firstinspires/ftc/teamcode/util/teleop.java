@@ -78,24 +78,18 @@ public class teleop extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                robot.lift(-0.2);
-
+                robot.lift(robot.PIDControl(1400, robot.RTL.getCurrentPosition()));
+            } else if (gamepad1.right_trigger > 0.1) {
+                robot.lift(robot.PIDControl(0, robot.RTL.getCurrentPosition()));
             }
 
-            else if (gamepad1.right_trigger > 0.1) {
-//               robot.moveDown();
-                robot.lift(0.2);
-            } else {
-                robot.lift(0);
+            if (gamepad1.dpad_up) {
+                robot.lift(0.3);
             }
 
-//            if (gamepad1.dpad_up) {
-//                robot.lift(0.);
-//            }
-//
-//            if (gamepad1.dpad_down) {
-//                robot.lift(-0.1);
-//            }
+            if (gamepad1.dpad_down) {
+                robot.lift(-0.3);
+            }
 
             if (gamepad1.dpad_right) {
                 robot.RTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
