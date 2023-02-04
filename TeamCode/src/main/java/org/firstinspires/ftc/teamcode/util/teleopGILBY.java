@@ -7,11 +7,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.officialAutos.RobotHardware;
 
-@TeleOp(name="teleopgilbert", group="Pushbot")
-public class teleop extends LinearOpMode {
+@TeleOp(name="GILBYGOBRRR", group="Pushbot")
+public class teleopGILBY extends LinearOpMode {
 
     /* Declare OpMode members. */
-      // Use a Pushbot's hardware
+    // Use a Pushbot's hardware
     RobotHardware robot = new RobotHardware(this);
 
     @Override
@@ -45,8 +45,15 @@ public class teleop extends LinearOpMode {
             // This way it's also easy to just drive straight, or just turn.
             double y = -gamepad1.right_stick_y; // Remember, this is reversed!
             double x = gamepad1.right_stick_x * 1.1; // Counteract imperfect strafing
-            double rx = gamepad1.left_stick_x * 0.7;
+            double rx = 0;
 
+            if (gamepad1.dpad_right) {
+                rx = 1;
+            }
+
+            if (gamepad1.dpad_left) {
+                rx = -1;
+            }
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
             // at least one is out of the range [-1, 1]
@@ -69,13 +76,13 @@ public class teleop extends LinearOpMode {
                 speedControl = 0.25;
             }
 
-            if (gamepad1.dpad_up) {
-                robot.claw.setPosition(0.1);
-            }
-
-            if (gamepad1.dpad_down) {
-                robot.claw.setPosition(1);
-            }
+//            if (gamepad1.dpad_up) {
+//                robot.claw.setPosition(0.1);
+//            }
+//
+//            if (gamepad1.dpad_down) {
+//                robot.claw.setPosition(1);
+//            }
 
             if (gamepad1.right_bumper) {
                 robot.lift(-0.2);
@@ -84,9 +91,17 @@ public class teleop extends LinearOpMode {
 
             else if (gamepad1.right_trigger > 0.1) {
 //               robot.moveDown();
-                robot.lift(0.2);
+                robot.lift(0.3);
             } else {
                 robot.lift(0);
+            }
+
+            if (gamepad1.left_stick_x > 0.5) {
+                robot.claw.setPosition(0);
+            }
+
+            if (gamepad1.left_stick_x < 0.5) {
+                robot.claw.setPosition(1);
             }
 
 //            if (gamepad1.dpad_up) {
@@ -97,21 +112,23 @@ public class teleop extends LinearOpMode {
 //                robot.lift(-0.1);
 //            }
 
-            if (gamepad1.dpad_right) {
-                robot.RTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.LTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            }
+//            if (gamepad1.dpad_right) {
+//                robot.RTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                robot.LTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            }
 
-               telemetry.addData("LF ticks", robot.LF.getCurrentPosition());
-               telemetry.addData("LB ticks", robot.LB.getCurrentPosition());
-               telemetry.addData("RF ticks", robot.RF.getCurrentPosition());
-               telemetry.addData("RB ticks", robot.RB.getCurrentPosition());
-               telemetry.addData("LTL ticks", robot.LTL.getCurrentPosition());
-               telemetry.addData("RTL ticks", robot.RTL.getCurrentPosition());
-               telemetry.update();
-               sleep(10);
-         }
+            telemetry.addData("LF ticks", robot.LF.getCurrentPosition());
+            telemetry.addData("LB ticks", robot.LB.getCurrentPosition());
+            telemetry.addData("RF ticks", robot.RF.getCurrentPosition());
+            telemetry.addData("RB ticks", robot.RB.getCurrentPosition());
+            telemetry.addData("LTL ticks", robot.LTL.getCurrentPosition());
+            telemetry.addData("RTL ticks", robot.RTL.getCurrentPosition());
+            telemetry.addData("RTL Power", robot.RTL.getPower());
+            telemetry.addData("LTL Power", robot.LTL.getPower());
+            telemetry.update();
+            sleep(10);
         }
+    }
 
         /*
     public void clawPosition (double position) {

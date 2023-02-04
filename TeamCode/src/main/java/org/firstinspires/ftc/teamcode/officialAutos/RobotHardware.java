@@ -109,7 +109,7 @@ public class RobotHardware {
     public double Ki = 0;
     public double Kd = 0;
     public double kF = 10;
-    ElapsedTime timer = new ElapsedTime();
+//    ElapsedTime timer = new ElapsedTime();
 //    Thread liftPID = new Thread(new RobotHardware());
 
 
@@ -169,6 +169,7 @@ public class RobotHardware {
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
 
         // Send telemetry message to signify robot waiting;
@@ -473,15 +474,15 @@ public class RobotHardware {
 //        lastError = error;
 //        timer.reset();
 //    }
-    public double PIDControl( double reference, double state ) {
-        double error = reference - state;
-        integralSum += error * timer.seconds();
-        double derivative = (error - lastError) / timer.seconds();
-        lastError = error;
-        timer.reset();
-        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
-        return output;
-    }
+//    public double PIDControl( double reference, double state ) {
+//        double error = reference - state;
+//        integralSum += error * timer.seconds();
+//        double derivative = (error - lastError) / timer.seconds();
+//        lastError = error;
+//        timer.reset();
+//        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+//        return output;
+//    }
 }
 
 
