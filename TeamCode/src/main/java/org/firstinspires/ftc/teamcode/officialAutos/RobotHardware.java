@@ -146,8 +146,8 @@ public class RobotHardware {
         LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RTL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        LTL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        RTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -167,8 +167,8 @@ public class RobotHardware {
         LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RTL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        LTL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        RTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LTL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         // Send telemetry message to signify robot waiting;

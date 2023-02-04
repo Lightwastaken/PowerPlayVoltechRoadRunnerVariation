@@ -78,22 +78,22 @@ public class teleop extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-//               robot.lift(robot.PIDControl(1000, robot.RTL.getVelocity()));
-                robot.lift(0.3);
+                robot.lift(0.05);
+
             }
 
             if (gamepad1.right_trigger > 0.1) {
 //               robot.moveDown();
-                robot.lift(-0.3);
+                robot.lift(-0.05);
             }
 
-            if (gamepad1.dpad_up) {
-                robot.lift(0.1);
-            }
-
-            if (gamepad1.dpad_down) {
-                robot.lift(-0.1);
-            }
+//            if (gamepad1.dpad_up) {
+//                robot.lift(0.);
+//            }
+//
+//            if (gamepad1.dpad_down) {
+//                robot.lift(-0.1);
+//            }
 
             if (gamepad1.dpad_right) {
                 robot.RTL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -107,7 +107,8 @@ public class teleop extends LinearOpMode {
                telemetry.addData("LTL ticks", robot.LTL.getCurrentPosition());
                telemetry.addData("RTL ticks", robot.RTL.getCurrentPosition());
                telemetry.update();
-            }
+               sleep(10);
+         }
         }
 
         /*
