@@ -23,8 +23,8 @@ package org.firstinspires.ftc.teamcode.officialAutos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -36,10 +36,17 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 
-@Autonomous(name="blue terminal parking only", group="Pushbot")
-public class blueautoparky extends LinearOpMode {
+
+@Autonomous(name="SplineOp(BR)", group="Pushbot")
+public class blueredSpline extends LinearOpMode {
+    public static Pose2d preloadEnd;
+    public static Pose2d cycleEnd;
+    double[] stack = {500, 475, 450, 425, 400};
+    int n = 0;
+
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -67,10 +74,10 @@ public class blueautoparky extends LinearOpMode {
     @Override
     public void runOpMode()
     {
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-        RobotHardware robot = new RobotHardware(this);
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -86,9 +93,9 @@ public class blueautoparky extends LinearOpMode {
 
             }
         });
-
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d start = new Pose2d(-36, -60, 0);
+        RobotHardware robot = new RobotHardware(this);
+        Pose2d start = new Pose2d(36, -60, Math.toRadians(90));
         drive.setPoseEstimate(start);
 
         telemetry.setMsTransmissionInterval(50);
@@ -174,33 +181,75 @@ public class blueautoparky extends LinearOpMode {
             telemetry.update();
         }
 
-
-        TrajectorySequence rightTOI = drive.trajectorySequenceBuilder(start)
-                .strafeLeft(23.5)
-                .forward(48)
-                .strafeRight(53.5)
+        TrajectorySequence preloadDeliver = drive.trajectorySequenceBuilder(start)
+                .strafeLeft(5)
+                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
+                    robot.lift(robot.PIDControl(robot.TOP_OUTTAKE_POSITION, robot.RTL.getCurrentPosition()));
+                })
+                .lineToLinearHeading(new Pose2d(-36, 10, Math.toRadians(-54)))
+                .waitSeconds(0.1)
+                .forward(6)
+                .waitSeconds(0.5)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    robot.lift(robot.PIDControl(25, robot.RTL.getCurrentPosition()));
+                })
+                .waitSeconds(0.1)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    robot.claw.setPosition(0.1);
+                })
+                .waitSeconds(0.5)
+                .lineToLinearHeading(new Pose2d(-24, 10, Math.toRadians(-90)))
+//                .lineToLinearHeading(new Pose2d(-60.4, 9, Math.toRadians(-175)))
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    robot.lift(robot.PIDControl(500, robot.RTL.getCurrentPosition()));
+//                    robot.lift(robot.PIDControl(500, robot.RTL.getCurrentPosition()));
+//                    robot.lift(robot.PIDControl(500, robot.RTL.getCurrentPosition()));
+//                })
+//                .forward(1.25)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    robot.claw.setPosition(1);
+//                })
+//                .waitSeconds(1)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(robot.PIDControl(RobotHardware.TOP_OUTTAKE_POSITION, robot.RTL.getCurrentPosition())); })
+//                .waitSeconds(0.75)
+//                .lineToLinearHeading(new Pose2d(-24, 6, Math.toRadians(-90)))
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
+//                .waitSeconds(0.5)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    robot.lift(robot.PIDControl(RobotHardware.BOTTOM_OUTTAKE_POSITION, robot.RTL.getCurrentPosition()));
+//                })
+//                .waitSeconds(0.75)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    robot.claw.setPosition(0.1);
+//                })
+//                .waitSeconds(1)
+//                .back(3)
                 .build();
 
-        TrajectorySequence middleTOI = drive.trajectorySequenceBuilder(start)
-                .strafeLeft(23.5)
-                .forward(48)
-                .strafeRight(26)
+        preloadEnd = preloadDeliver.end();
+
+
+        TrajectorySequence leftTOI = drive.trajectorySequenceBuilder(preloadEnd)
+                .strafeLeft(13)
                 .build();
 
-        TrajectorySequence leftTOI = drive.trajectorySequenceBuilder(start)
-                .strafeLeft(23.5)
-                .forward(48)
+        TrajectorySequence middleTOI = drive.trajectorySequenceBuilder(preloadEnd)
+                .strafeRight(13)
+                .build();
+
+        TrajectorySequence rightTOI = drive.trajectorySequenceBuilder(preloadEnd)
+                .back(0.25)
+                .strafeRight(42)
                 .build();
 
 
-        /* Actually do something useful */
-
-
-        if (tagOfInterest == null || tagOfInterest.id == LEFT) { //LEFT parking
+        //TRAJECTORY FOLLOWED
+        drive.followTrajectorySequence(preloadDeliver);
+        if (tagOfInterest == null || tagOfInterest.id == LEFT) { //LEFT parking: ID #1
             drive.followTrajectorySequence(leftTOI);
-        } else if (tagOfInterest.id == MIDDLE) { //MIDDLE parking
+        } else if (tagOfInterest.id == MIDDLE) { //MIDDLE parking: ID #2
             drive.followTrajectorySequence(middleTOI);
-        } else { //RIGHT parking
+        } else { //RIGHT parking; ID #3
             drive.followTrajectorySequence(rightTOI);
         }
 
@@ -218,5 +267,38 @@ public class blueautoparky extends LinearOpMode {
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+    }
+
+    public void cycles(int numCycles, SampleMecanumDrive drive, RobotHardware robot) {
+        TrajectorySequence cycle = drive.trajectorySequenceBuilder(preloadEnd)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    robot.lift(robot.PIDControl(stack[n], robot.RTL.getCurrentPosition()));
+                })
+                .lineToLinearHeading(new Pose2d(-60, 9, Math.toRadians(180.4)))
+                .waitSeconds(0.25)
+                .forward(4)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    robot.claw.setPosition(1);
+                })
+                .waitSeconds(0.5)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    robot.lift(robot.PIDControl(RobotHardware.TOP_OUTTAKE_POSITION, robot.RTL.getCurrentPosition()));
+                })
+                .lineToLinearHeading(preloadEnd)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    robot.lift(-0.1);
+                })
+                .waitSeconds(0.1)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    robot.claw.setPosition(0.1);
+                })
+                .waitSeconds(0.25)
+                .build();
+
+        for (int i = 0; i < numCycles; i++) {
+            drive.followTrajectorySequence(cycle);
+        }
+
+        cycleEnd = cycle.end();
     }
 }

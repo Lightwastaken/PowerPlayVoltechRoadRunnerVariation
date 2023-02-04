@@ -176,19 +176,16 @@ public class autoparky extends LinearOpMode {
 
 
         TrajectorySequence leftTOI = drive.trajectorySequenceBuilder(start)
-                .strafeRight(24)
+                .strafeLeft(24)
                 .forward(49.5)
-                .strafeLeft(53.5)
                 .build();
 
         TrajectorySequence middleTOI = drive.trajectorySequenceBuilder(start)
-                .strafeRight(24)
                 .forward(50.5)
-                .strafeLeft(24)
                 .build();
 
         TrajectorySequence rightTOI = drive.trajectorySequenceBuilder(start)
-                .strafeRight(24)
+                .strafeRight(50)
                 .forward(49.5)
                 .build();
 

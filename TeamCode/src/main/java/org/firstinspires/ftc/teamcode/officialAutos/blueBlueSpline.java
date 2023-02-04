@@ -182,11 +182,11 @@ public class blueBlueSpline extends LinearOpMode {
         }
 
         TrajectorySequence preloadDeliver = drive.trajectorySequenceBuilder(start)
-                .strafeLeft(5)
+                .strafeRight(5)
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
                     robot.lift(robot.PIDControl(robot.TOP_OUTTAKE_POSITION, robot.RTL.getCurrentPosition()));
                 })
-                .lineToLinearHeading(new Pose2d(36, -10, Math.toRadians(-54)))
+                .lineToLinearHeading(new Pose2d(-36, 10, Math.toRadians(-135)))
                 .waitSeconds(0.1)
                 .forward(6)
                 .waitSeconds(0.5)
@@ -199,31 +199,31 @@ public class blueBlueSpline extends LinearOpMode {
                 })
                 .waitSeconds(0.5)
                 .lineToLinearHeading(new Pose2d(-24, 10, Math.toRadians(-90)))
-                .lineToLinearHeading(new Pose2d(-60.4, 9, Math.toRadians(-175)))
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.lift(robot.PIDControl(500, robot.RTL.getCurrentPosition()));
-                    robot.lift(robot.PIDControl(500, robot.RTL.getCurrentPosition()));
-                    robot.lift(robot.PIDControl(500, robot.RTL.getCurrentPosition()));
-                })
-                .forward(1.25)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.claw.setPosition(1);
-                })
-                .waitSeconds(1)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(robot.PIDControl(RobotHardware.TOP_OUTTAKE_POSITION, robot.RTL.getCurrentPosition())); })
-                .waitSeconds(0.75)
-                .lineToLinearHeading(new Pose2d(-24, 6, Math.toRadians(-90)))
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
-                .waitSeconds(0.5)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.lift(robot.PIDControl(RobotHardware.BOTTOM_OUTTAKE_POSITION, robot.RTL.getCurrentPosition()));
-                })
-                .waitSeconds(0.75)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.claw.setPosition(0.1);
-                })
-                .waitSeconds(1)
-                .back(3)
+//                .lineToLinearHeading(new Pose2d(-60.4, 9, Math.toRadians(-175)))
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    robot.lift(robot.PIDControl(500, robot.RTL.getCurrentPosition()));
+//                    robot.lift(robot.PIDControl(500, robot.RTL.getCurrentPosition()));
+//                    robot.lift(robot.PIDControl(500, robot.RTL.getCurrentPosition()));
+//                })
+//                .forward(1.25)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    robot.claw.setPosition(1);
+//                })
+//                .waitSeconds(1)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(robot.PIDControl(RobotHardware.TOP_OUTTAKE_POSITION, robot.RTL.getCurrentPosition())); })
+//                .waitSeconds(0.75)
+//                .lineToLinearHeading(new Pose2d(-24, 6, Math.toRadians(-90)))
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
+//                .waitSeconds(0.5)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    robot.lift(robot.PIDControl(RobotHardware.BOTTOM_OUTTAKE_POSITION, robot.RTL.getCurrentPosition()));
+//                })
+//                .waitSeconds(0.75)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    robot.claw.setPosition(0.1);
+//                })
+//                .waitSeconds(1)
+//                .back(3)
                 .build();
 
         preloadEnd = preloadDeliver.end();
@@ -234,7 +234,6 @@ public class blueBlueSpline extends LinearOpMode {
                 .build();
 
         TrajectorySequence middleTOI = drive.trajectorySequenceBuilder(preloadEnd)
-                .back(0.25)
                 .strafeRight(13)
                 .build();
 

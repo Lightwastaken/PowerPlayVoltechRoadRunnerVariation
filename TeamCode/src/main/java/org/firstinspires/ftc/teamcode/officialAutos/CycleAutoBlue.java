@@ -97,6 +97,7 @@ public class CycleAutoBlue extends LinearOpMode {
         telemetry.setMsTransmissionInterval(50);
         robot.initHW();
         /*
+
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
@@ -178,37 +179,42 @@ public class CycleAutoBlue extends LinearOpMode {
         }
 
         TrajectorySequence preloadDeliver = drive.trajectorySequenceBuilder(start)
-                .addDisplacementMarker(23, () -> { robot.claw.setPosition(1); })
                 .forward(1.5)
                 .strafeLeft(24)
-                .UNSTABLE_addDisplacementMarkerOffset(0, () -> { robot.lift(robot.PIDControl(RobotHardware.TOP_OUTTAKE_POSITION, robot.RTL.getCurrentPosition()));})
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0.2); })
                 .waitSeconds(1)
-                .lineToLinearHeading(new Pose2d(-11, 16, Math.toRadians(-123.5)))
-                .forward(13)
+                .lineToLinearHeading(new Pose2d(-11, 15, Math.toRadians(-120)))
+                .forward(9)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
                 .waitSeconds(0.25)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(robot.PIDControl(RobotHardware.BOTTOM_OUTTAKE_POSITION, robot.RTL.getCurrentPosition())); })
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(-0.01); })
                 .waitSeconds(0.5)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.claw.setPosition(0.1); })
                 .waitSeconds(0.75)
                 .back(5)
                 .lineToLinearHeading(new Pose2d(-24, 12, Math.toRadians(-90)))
 
-                .lineToLinearHeading(new Pose2d(-60.4, 9, Math.toRadians(-175)))
+                .lineToLinearHeading(new Pose2d(-57, 9, Math.toRadians(-175)))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.lift(robot.PIDControl(500, robot.RTL.getCurrentPosition()));
+                    robot.lift(0.1);
+                })
+                .waitSeconds(1.6325)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    robot.lift(0);
                 })
                 .forward(1.25)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     robot.claw.setPosition(1);
                 })
                 .waitSeconds(1)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(robot.PIDControl(RobotHardware.TOP_OUTTAKE_POSITION, robot.RTL.getCurrentPosition())); })
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0.1); })
                 .waitSeconds(0.75)
-                .lineToLinearHeading(new Pose2d(-24, 6, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(-24, 9, Math.toRadians(-90)))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
                 .waitSeconds(0.5)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.lift(robot.PIDControl(RobotHardware.BOTTOM_OUTTAKE_POSITION, robot.RTL.getCurrentPosition()));
+
+                                        robot.lift(-0.01);
                 })
                 .waitSeconds(0.75)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
@@ -264,36 +270,36 @@ public class CycleAutoBlue extends LinearOpMode {
 
     public void cycles(int numCycles, SampleMecanumDrive drive, RobotHardware robot) {
         for (int i = 0; i < numCycles; i++) {
-         TrajectorySequence cycle = drive.trajectorySequenceBuilder(preloadEnd)
-                .UNSTABLE_addDisplacementMarkerOffset(12 - 2 * i, () -> {
-                    robot.claw.setPosition(1);
-                    robot.lift(-0.01);
-                })
-                .lineToSplineHeading(new Pose2d(57, -11.5, Math.toRadians(0)))
-                .addDisplacementMarker(() -> {
-                    robot.lift(0);
-                })
-                .waitSeconds(0.25)
-                .addTemporalMarker(() -> {
-                    robot.claw.setPosition(0);
-                })
-                .waitSeconds(0.3)
-                .addTemporalMarker(() -> {
-                    robot.lift(0.1);
-                })
-                .waitSeconds(1)
-                .lineToSplineHeading(new Pose2d(24, -12, Math.toRadians(90)))
-                .waitSeconds(0.5)
-                .addTemporalMarker(() -> {
-                    robot.lift(-0.01);
-                })
-                .waitSeconds(1)
-                .addTemporalMarker(() -> {
-                    robot.claw.setPosition(1);
-                    robot.lift(0.05);
-                })
-                .waitSeconds(0.5)
-                .build();
+            TrajectorySequence cycle = drive.trajectorySequenceBuilder(preloadEnd)
+                    .UNSTABLE_addDisplacementMarkerOffset(12 - 2 * i, () -> {
+                        robot.claw.setPosition(1);
+                        robot.lift(-0.01);
+                    })
+                    .lineToSplineHeading(new Pose2d(57, -11.5, Math.toRadians(0)))
+                    .addDisplacementMarker(() -> {
+                        robot.lift(0);
+                    })
+                    .waitSeconds(0.25)
+                    .addTemporalMarker(() -> {
+                        robot.claw.setPosition(0);
+                    })
+                    .waitSeconds(0.3)
+                    .addTemporalMarker(() -> {
+                        robot.lift(0.1);
+                    })
+                    .waitSeconds(1)
+                    .lineToSplineHeading(new Pose2d(24, -12, Math.toRadians(90)))
+                    .waitSeconds(0.5)
+                    .addTemporalMarker(() -> {
+                        robot.lift(-0.01);
+                    })
+                    .waitSeconds(1)
+                    .addTemporalMarker(() -> {
+                        robot.claw.setPosition(1);
+                        robot.lift(0.05);
+                    })
+                    .waitSeconds(0.5)
+                    .build();
             cycleEnd = cycle.end();
         }
     }
