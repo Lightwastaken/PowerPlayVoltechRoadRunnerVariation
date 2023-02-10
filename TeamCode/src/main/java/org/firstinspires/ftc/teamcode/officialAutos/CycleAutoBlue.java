@@ -37,6 +37,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
+@Disabled
 @Autonomous(name="Blue terminal blue substation", group="Pushbot")
 public class CycleAutoBlue extends LinearOpMode {
     public static Pose2d preloadEnd;
@@ -179,12 +180,14 @@ public class CycleAutoBlue extends LinearOpMode {
         }
 
         TrajectorySequence preloadDeliver = drive.trajectorySequenceBuilder(start)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                        robot.claw.setPosition(1);
+                })
                 .forward(1.5)
                 .strafeLeft(24)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0.2); })
-                .waitSeconds(1)
-                .lineToLinearHeading(new Pose2d(-11, 15, Math.toRadians(-120)))
-                .forward(9)
+                .lineToLinearHeading(new Pose2d(-11, 15, Math.toRadians(-123)))
+                .forward(11)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
                 .waitSeconds(0.25)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(-0.01); })
@@ -194,22 +197,22 @@ public class CycleAutoBlue extends LinearOpMode {
                 .back(5)
                 .lineToLinearHeading(new Pose2d(-24, 12, Math.toRadians(-90)))
 
-                .lineToLinearHeading(new Pose2d(-57, 9, Math.toRadians(-175)))
+                .lineToLinearHeading(new Pose2d(-57, 7, Math.toRadians(-180)))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     robot.lift(0.1);
                 })
-                .waitSeconds(1.6325)
+                .waitSeconds(1.3)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     robot.lift(0);
                 })
-                .forward(1.25)
+                .forward(5)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     robot.claw.setPosition(1);
                 })
                 .waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0.1); })
                 .waitSeconds(0.75)
-                .lineToLinearHeading(new Pose2d(-24, 9, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(-22, 6, Math.toRadians(-90)))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
                 .waitSeconds(0.5)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
@@ -228,7 +231,7 @@ public class CycleAutoBlue extends LinearOpMode {
 
 
         TrajectorySequence leftTOI = drive.trajectorySequenceBuilder(preloadEnd)
-                .strafeLeft(13)
+                .strafeLeft(19)
                 .build();
 
         TrajectorySequence middleTOI = drive.trajectorySequenceBuilder(preloadEnd)
@@ -238,7 +241,7 @@ public class CycleAutoBlue extends LinearOpMode {
 
         TrajectorySequence rightTOI = drive.trajectorySequenceBuilder(preloadEnd)
                 .back(0.25)
-                .strafeRight(38)
+                .strafeRight(39)
                 .build();
 
 

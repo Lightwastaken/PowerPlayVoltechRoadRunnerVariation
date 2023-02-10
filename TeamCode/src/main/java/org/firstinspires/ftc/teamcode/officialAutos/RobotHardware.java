@@ -164,7 +164,6 @@ public class RobotHardware {
         RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LTL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        claw.setPosition(1);
         setMotorPowers(0);
 
         LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

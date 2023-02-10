@@ -79,13 +79,19 @@ public class teleopGILBY extends LinearOpMode {
                 speedControl = 0.25;
             }
 
-//            if (gamepad1.dpad_up) {
-//                robot.claw.setPosition(0.1);
-//            }
-//
-//            if (gamepad1.dpad_down) {
-//                robot.claw.setPosition(1);
-//            }
+            if (gamepad1.dpad_up) {
+                robot.LF.setPower(0.5);
+                robot.RF.setPower(-0.5);
+                robot.LB.setPower(-0.5);
+                robot.RB.setPower(0.5);
+            }
+
+            if (gamepad1.dpad_down) {
+                robot.LF.setPower(-0.5);
+                robot.RF.setPower(0.5);
+                robot.LB.setPower(0.5);
+                robot.RB.setPower(-0.5);
+            }
 
             if (gamepad1.right_bumper) {
                 robot.lift(-0.3);
@@ -123,14 +129,18 @@ public class teleopGILBY extends LinearOpMode {
 //            }
             }
 
-            telemetry.addData("LF ticks", robot.LF.getCurrentPosition());
-            telemetry.addData("LB ticks", robot.LB.getCurrentPosition());
-            telemetry.addData("RF ticks", robot.RF.getCurrentPosition());
-            telemetry.addData("RB ticks", robot.RB.getCurrentPosition());
-            telemetry.addData("LTL ticks", robot.LTL.getCurrentPosition());
-            telemetry.addData("RTL ticks", robot.RTL.getCurrentPosition());
-            telemetry.addData("LTL power:", robot.LTL.getPower());
-            telemetry.addData("RTL power: ", robot.RTL.getPower());
+//            telemetry.addData("LF ticks", robot.LF.getCurrentPosition());
+//            telemetry.addData("LB ticks", robot.LB.getCurrentPosition());
+//            telemetry.addData("RF ticks", robot.RF.getCurrentPosition());
+//            telemetry.addData("RB ticks", robot.RB.getCurrentPosition());
+//            telemetry.addData("LTL ticks", robot.LTL.getCurrentPosition());
+//            telemetry.addData("RTL ticks", robot.RTL.getCurrentPosition());
+//            telemetry.addData("LTL power:", robot.LTL.getPower());
+//            telemetry.addData("RTL power: ", robot.RTL.getPower());
+            telemetry.addData("RF power:", robot.RF.getPower());
+            telemetry.addData("RL power: ", robot.RTL.getPower());
+            telemetry.addData("LF power:", robot.LF.getPower());
+            telemetry.addData("LB power: ", robot.LB.getPower());
             telemetry.update();
         }
 

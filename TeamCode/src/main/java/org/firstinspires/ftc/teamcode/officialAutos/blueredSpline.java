@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 
 
+@Disabled
 @Autonomous(name="SplineOp(BR)", group="Pushbot")
 public class blueredSpline extends LinearOpMode {
     public static Pose2d preloadEnd;

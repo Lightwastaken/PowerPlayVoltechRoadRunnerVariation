@@ -25,6 +25,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -37,7 +38,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
-
+@Disabled
 @Autonomous(name="red terminal parking only", group="Pushbot")
 public class autoparky extends LinearOpMode {
     OpenCvCamera camera;
@@ -177,22 +178,23 @@ public class autoparky extends LinearOpMode {
 
         TrajectorySequence leftTOI = drive.trajectorySequenceBuilder(start)
                 .strafeLeft(24)
-                .forward(49.5)
+                .forward(30)
                 .build();
 
         TrajectorySequence middleTOI = drive.trajectorySequenceBuilder(start)
-                .forward(50.5)
+                .forward(30)
                 .build();
 
         TrajectorySequence rightTOI = drive.trajectorySequenceBuilder(start)
-                .strafeRight(50)
-                .forward(49.5)
+                .strafeRight(30)
+                .forward(30)
                 .build();
 
 
         /* Actually do something useful */
 
 
+        robot.claw.setPosition(1);
         if (tagOfInterest == null || tagOfInterest.id == LEFT) { //LEFT parking
             drive.followTrajectorySequence(leftTOI);
         } else if (tagOfInterest.id == MIDDLE) { //MIDDLE parking

@@ -36,6 +36,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
+
+@Disabled
 @Autonomous(name="Red terminal blue substation", group="Pushbot")
 public class CycleAutoRed2 extends LinearOpMode {
     static Pose2d preloadEnd;
@@ -176,14 +178,17 @@ public class CycleAutoRed2 extends LinearOpMode {
         }
 
         TrajectorySequence preloadDeliver = drive.trajectorySequenceBuilder(start)
-                .addDisplacementMarker(23, () -> { robot.claw.setPosition(0); })
-                .strafeRight(25)
-                .addTemporalMarker(() -> { robot.lift(0.075); })
+                .forward(1.5)
+                .strafeLeft(24)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0.2); })
                 .lineToLinearHeading(new Pose2d(-11, -16, Math.toRadians(-33.5)))
-                .addTemporalMarker(() -> { robot.lift(0); })
-                .forward(10)
-                .addTemporalMarker(() -> { robot.lift(-0.01); })
-                .waitSeconds(1)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
+                .waitSeconds(0.25)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(-0.01); })
+                .waitSeconds(0.5)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.claw.setPosition(0.1); })
+                .waitSeconds(0.75)
+                .back(5)
                 .addTemporalMarker(() -> {
                     robot.claw.setPosition(1);
                     robot.lift(0.01);

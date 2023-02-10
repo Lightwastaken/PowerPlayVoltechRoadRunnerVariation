@@ -22,8 +22,9 @@
 package org.firstinspires.ftc.teamcode.officialAutos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -37,12 +38,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Disabled
-@Autonomous(name="Red terminal red substation", group="Pushbot")
-public class CycleAutoRed extends LinearOpMode {
-    public static Pose2d preloadEnd;
-    public static Pose2d cycleEnd;
-
+@Autonomous(name="lifty", group="Pushbot")
+public class liftTest extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -56,6 +53,7 @@ public class CycleAutoRed extends LinearOpMode {
     double fy = 822.317;
     double cx = 319.495;
     double cy =  242.502;
+    public static Pose2d preloadEnd;
 
     // UNITS ARE METERS
     double tagsize = 0.166;
@@ -65,17 +63,15 @@ public class CycleAutoRed extends LinearOpMode {
     int MIDDLE = 2;
     int RIGHT = 3;
 
+    AprilTagDetection tagOfInterest = null;
 
     @Override
     public void runOpMode()
     {
-        AprilTagDetection tagOfInterest = null;
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        RobotHardware robot = new RobotHardware(this);
-
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        RobotHardware robot = new RobotHardware(this);
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -92,7 +88,8 @@ public class CycleAutoRed extends LinearOpMode {
             }
         });
 
-        Pose2d start = new Pose2d(-36, -60, Math.toRadians(90));
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Pose2d start = new Pose2d(-36, -60, 0);
         drive.setPoseEstimate(start);
 
         telemetry.setMsTransmissionInterval(50);
@@ -179,50 +176,16 @@ public class CycleAutoRed extends LinearOpMode {
         }
 
         TrajectorySequence preloadDeliver = drive.trajectorySequenceBuilder(start)
-                .addDisplacementMarker(23, () -> { robot.claw.setPosition(1); })
-                .forward(1.5)
-                .strafeRight(24)
-                .UNSTABLE_addDisplacementMarkerOffset(0, () -> { robot.lift(0.05); })
-                .lineToLinearHeading(new Pose2d(-11, -16, Math.toRadians(120)))
-                .forward(13)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
-                .waitSeconds(0.25)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(-0.01); })
-                .waitSeconds(0.5)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.claw.setPosition(0.1); })
-                .waitSeconds(0.75)
-                .back(5)
-                .lineToLinearHeading(new Pose2d(-24, -12, Math.toRadians(90)))
-
-                .lineToLinearHeading(new Pose2d(-60.5, -9, Math.toRadians(175)))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.lift(0.1);
+                    robot.lift(robot.PIDControl(1300,robot.RTL.getCurrentPosition()));
                 })
-                .waitSeconds(1.6)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.lift(0);
-                })
-                .forward(1.6)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.claw.setPosition(1);
-                })
-                .waitSeconds(1)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0.1); })
-                .waitSeconds(0.75)
-                .lineToLinearHeading(new Pose2d(-24, -5, Math.toRadians(90)))
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> { robot.lift(0); })
-                .waitSeconds(0.5)
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robot.claw.setPosition(0.1);
-                })
-                .waitSeconds(1)
                 .build();
 
         preloadEnd = preloadDeliver.end();
 
 
         TrajectorySequence leftTOI = drive.trajectorySequenceBuilder(preloadEnd)
-                .strafeLeft(13)
+                .strafeLeft(19)
                 .build();
 
         TrajectorySequence middleTOI = drive.trajectorySequenceBuilder(preloadEnd)
@@ -232,25 +195,22 @@ public class CycleAutoRed extends LinearOpMode {
 
         TrajectorySequence rightTOI = drive.trajectorySequenceBuilder(preloadEnd)
                 .back(0.25)
-                .strafeRight(38)
+                .strafeRight(39)
                 .build();
 
 
         //TRAJECTORY FOLLOWED
         drive.followTrajectorySequence(preloadDeliver);
-        if (tagOfInterest == null || tagOfInterest.id == LEFT) { //LEFT parking
+        if (tagOfInterest == null || tagOfInterest.id == LEFT) { //LEFT parking: ID #1
             drive.followTrajectorySequence(leftTOI);
-        } else if (tagOfInterest.id == MIDDLE) { //MIDDLE parking
+        } else if (tagOfInterest.id == MIDDLE) { //MIDDLE parking: ID #2
             drive.followTrajectorySequence(middleTOI);
-        } else { //RIGHT parking
+        } else { //RIGHT parking; ID #3
             drive.followTrajectorySequence(rightTOI);
         }
-        robot.claw.setPosition(1);
-        robot.lift(-0.05);
 
 
 
-        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
     }
 
     void tagToTelemetry(AprilTagDetection detection)
@@ -262,41 +222,5 @@ public class CycleAutoRed extends LinearOpMode {
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
-    }
-
-    public void cycles(int numCycles, SampleMecanumDrive drive, RobotHardware robot) {
-        for (int i = 0; i < numCycles; i++) {
-            TrajectorySequence cycle = drive.trajectorySequenceBuilder(preloadEnd)
-                    .UNSTABLE_addDisplacementMarkerOffset(12 - 2 * i, () -> {
-                        robot.claw.setPosition(1);
-                        robot.lift(-0.01);
-                    })
-                    .lineToSplineHeading(new Pose2d(57, -11.5, Math.toRadians(0)))
-                    .addDisplacementMarker(() -> {
-                        robot.lift(0);
-                    })
-                    .waitSeconds(0.25)
-                    .addTemporalMarker(() -> {
-                        robot.claw.setPosition(0);
-                    })
-                    .waitSeconds(0.3)
-                    .addTemporalMarker(() -> {
-                        robot.lift(0.1);
-                    })
-                    .waitSeconds(1)
-                    .lineToSplineHeading(new Pose2d(24, -12, Math.toRadians(90)))
-                    .waitSeconds(0.5)
-                    .addTemporalMarker(() -> {
-                        robot.lift(-0.01);
-                    })
-                    .waitSeconds(1)
-                    .addTemporalMarker(() -> {
-                        robot.claw.setPosition(1);
-                        robot.lift(0.05);
-                    })
-                    .waitSeconds(0.5)
-                    .build();
-            cycleEnd = cycle.end();
-        }
     }
 }
