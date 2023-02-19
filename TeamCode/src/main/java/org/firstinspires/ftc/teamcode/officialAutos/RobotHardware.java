@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode.officialAutos;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.linearOpMode;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
@@ -50,6 +51,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Servoconfig;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 
 /**
@@ -72,7 +74,7 @@ import org.firstinspires.ftc.teamcode.Servoconfig;
  */
 @Config
 public class RobotHardware {
-
+    public static SampleMecanumDrive drive = null;
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
 
@@ -182,6 +184,8 @@ public class RobotHardware {
         // Send telemetry message to signify robot waiting;
     }
     public void initHW2() {
+        drive = new SampleMecanumDrive(hardwareMap);
+
         //INITIALIZE ALL HARDWARE
         LF  = myOpMode.hardwareMap.get(DcMotorEx.class, "LF");
         LB = myOpMode.hardwareMap.get(DcMotorEx.class, "LB");
